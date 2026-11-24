@@ -1,6 +1,6 @@
 # MotorBike on intelM2
 
-Identity and deterministic RCM were evaluated on the same 352,253 cell mesh with
+Original and deterministic RCM were evaluated on the same 352,253 cell mesh with
 1,053,964 internal faces. Both runs used the same probe binary, an Intel Core
 Ultra 7 356H, CPU affinity 0–3, eight warmup sweeps, and seven samples of 64
 sweeps. Setup and numerical validation ran outside the timed intervals. The probe
@@ -8,7 +8,7 @@ linked the existing RelWithDebInfo libraries from the intelM2
 WavefrontGaussSeidel worktree at dc067cd with local changes. Locality analysis
 used the current sibling Python tools, including its updated visualizer.
 
-| Kernel | Identity, ms/sweep | RCM, ms/sweep | Identity / RCM | IH1 vs GS, identity / RCM |
+| Kernel | Original, ms/sweep | RCM, ms/sweep | Original / RCM | IH1 vs GS, original / RCM |
 |---|---:|---:|---:|---:|
 | Original GS 1T | 2.323 ± 0.004 | 2.120 ± 0.004 | 1.10× | — |
 | IH1W1024 1T | 1.780 ± 0.005 | 1.732 ± 0.004 | 1.03× | 1.31× / 1.22× |
@@ -22,7 +22,7 @@ Values are medians with sample standard deviations. Each speedup compares
 identical kernels and thread counts across numberings, or compares with Original
 GS 1T on the same numbering in the last column.
 
-| LDU locality metric | Identity | RCM |
+| LDU locality metric | Original | RCM |
 |---|---:|---:|
 | Total psi read jump magnitude | 77,134,582,640 | 17,672,691,649 |
 | P99 per-cell jump magnitude | 650,757 | 82,189 |

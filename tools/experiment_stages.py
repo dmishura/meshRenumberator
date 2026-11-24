@@ -20,6 +20,7 @@ def analyze(args):
     )
     from ih_permutation import IHPermutation
     from mesh_renumber import json_write, read_poly_mesh, validate
+    from locality import full_metrics
 
     validate(args.experiment)
     path = args.experiment / "polyMesh"
@@ -41,6 +42,18 @@ def analyze(args):
              **{name: mask for name, (mask, _, _) in masks.items()})
     report = {"LDU_psi_read": stats, "LDU_coefficients": coeffs,
               "ordering": asdict(analyse_mesh(args.experiment.name, path, mesh=mesh))}
+    full_values, coefficients = full_metrics(mesh)
+    if not np.array_equal(values, full_values):
+        raise ValueError("full optimizer objective differs from tomography row values")
+    report["LDU_array_transitions"] = coefficients
+    report["psi_tomography_parity"] = True
+    if args.layout_probe:
+        completed = subprocess.run(
+            [str(args.layout_probe.resolve()), str(path), str(args.layout_width)],
+            capture_output=True, text=True)
+        if completed.returncode:
+            raise RuntimeError(completed.stderr.strip() or "packed layout analysis failed")
+        report["IH1_packed_arrays"] = json.loads(completed.stdout)
     if args.centres_export:
         centres = export_centres(args.centres_export, args.experiment)
         clusters = {}
@@ -77,6 +90,11 @@ def benchmark(args):
             and len(set(args.widths)) == len(args.widths), "invalid benchmark settings")
     paths = os.sched_getaffinity(0)
     config = json.loads((experiment / "config.json").read_text())
+    if config["algorithm"] == "cache-traversal":
+        traversal = config["traversal"]
+        require(traversal["eligible"], "cannot benchmark a rejected cache-traversal candidate")
+        require(args.widths == [traversal["schedule_width"]],
+                "benchmark width differs from the cache-traversal safeguard")
     result = Path(tempfile.mkdtemp(prefix="benchmark-", dir=experiment))
     env = os.environ | {"OMP_PROC_BIND": "close", "OMP_PLACES": "cores",
                        "OMP_DYNAMIC": "FALSE"}
@@ -153,7 +171,7 @@ def compare(args):
 
     summaries = [json.loads((path / "summary.json").read_text()) for path in args.runs]
     first = summaries[0]
-    require(first["algorithm"] == "identity", "pass identity benchmark first")
+    require(first["algorithm"] in {"original", "identity"}, "pass Original benchmark first")
     columns = list(first["timings"])
     localities = []
     for path, summary in zip(args.runs, summaries):
@@ -165,11 +183,17 @@ def compare(args):
 
     include_locality = all(localities)
     extra = ["LDU psi total", "LDU psi P99", "LDU psi max"] if include_locality else []
+    include_coefficients = include_locality and all("LDU_array_transitions" in item
+                                                    for item in localities)
+    if include_coefficients:
+        extra.append("LDU upper + upperAddr line transitions")
     headers = ["Numbering", *columns, *extra]
     print("| " + " | ".join(headers) + " |")
     print("|" + "---|" * len(headers))
-    for summary, locality in zip(summaries, localities):
-        items = [summary["algorithm"]]
+    for path, summary, locality in zip(args.runs, summaries, localities):
+        items = ["original" if summary["algorithm"] == "identity" else summary["algorithm"]]
+        if items[0] in {"locality", "cache-partition"}:
+            items[0] = path.parent.name
         for key in columns:
             timing = summary["timings"][key]
             ms = timing["median_ms_per_sweep"]
@@ -178,17 +202,55 @@ def compare(args):
         if include_locality:
             stats = locality["LDU_psi_read"]
             items.extend(f"{stats[key]:,.0f}" for key in ("totalJumpMagnitude", "p99", "max"))
+        if include_coefficients:
+            items.append(f"{locality['LDU_array_transitions']['coefficient_transitions']:,}")
         print("| " + " | ".join(items) + " |")
 
     if args.tomography:
-        from visualize_ih1_locality import run_natural_read_comparison
-        require(len(args.runs) == 2 and args.centres_export,
-                "tomography requires two runs and --centres-export")
-        labels = [f"{index}-{summary['algorithm']}" for index, summary in enumerate(summaries)]
-        experiments = dict(zip(labels, (path.parent for path in args.runs)))
-        for experiment in experiments.values():
-            export_centres(args.centres_export, experiment)
-        run_natural_read_comparison(
-            {name: path / "polyMesh" for name, path in experiments.items()},
-            {name: path / "cell_centres.ihcentres" for name, path in experiments.items()},
-            args.tomography, 2048)
+        require(len(args.runs) >= 2 and args.centres_export,
+                "tomography requires two or more runs and --centres-export")
+        tomography([path.parent for path in args.runs], args.tomography, args.centres_export)
+
+
+def tomography(experiments, output, exporter):
+    from mesh_renumber import json_write, read_poly_mesh
+    from visualize_ih1_locality import (
+        deterministic_outlier_masks, natural_read_total_jumps, normalization_threshold,
+        safe_name, save_binary_projection_triptych, save_projection_triptych,
+    )
+
+    cases = []
+    for experiment in experiments:
+        centres = export_centres(exporter, experiment)
+        fields = experiment / "locality.npz"
+        if fields.is_file():
+            with np.load(fields) as arrays:
+                jumps = arrays["psiTotalJump_read"]
+                nonseq = arrays["psiNonSequential"]
+        else:
+            mesh = read_poly_mesh(experiment / "polyMesh")
+            jumps, _, _, nonseq, _, _, _ = natural_read_total_jumps(mesh)
+        cases.append((experiment.name, centres, jumps, nonseq))
+
+    low = np.min([centres.min(axis=0) for _, centres, _, _ in cases], axis=0)
+    high = np.max([centres.max(axis=0) for _, centres, _, _ in cases], axis=0)
+    threshold = normalization_threshold(np.concatenate([jumps for _, _, jumps, _ in cases]))
+    max_count = max(1, max(int(nonseq.max()) for _, _, _, nonseq in cases))
+    output.mkdir(parents=True, exist_ok=True)
+    json_write(output / "projection.json", {
+        "min_xyz": low.tolist(), "max_xyz": high.tolist(),
+        "shared_jump_log_threshold": threshold,
+        "shared_nonsequential_linear_max": max_count,
+        "masks": "strictly greater than each mesh's lower-method percentile",
+    })
+    for index, (name, centres, jumps, nonseq) in enumerate(cases):
+        prefix = f"{index}-{safe_name(name)}"
+        save_projection_triptych(output / f"{prefix}_psiTotalJump_read.png",
+                                 centres, jumps, threshold, world_bounds=(low, high))
+        save_projection_triptych(output / f"{prefix}_psiNonSequential.png",
+                                 centres, nonseq, max_count, scale="linear",
+                                 world_bounds=(low, high))
+        masks = deterministic_outlier_masks(jumps)
+        for label in ("p99_9", "p99_99"):
+            save_binary_projection_triptych(output / f"{prefix}_{label}.png",
+                                            centres, masks[label][0], (low, high))

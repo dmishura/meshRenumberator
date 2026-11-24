@@ -226,18 +226,82 @@ def remap_faces(offsets, vertices, order, flipped):
     return new_offsets, vertices[np.repeat(offsets[order], lengths) + relative]
 
 
+def read_cell_zones(path, n_cells):
+    """Read standard cellZone entries, including a FoamFile meta names list."""
+    def token(stream, expected):
+        _skip_space_and_comments(stream, path)
+        require(stream.read(len(expected)) == expected, f"expected {expected!r} in {path}")
+
+    zones = {}
+    with foam_object(path, {"regIOobject", "cellZoneMesh"}) as (stream, _, binary):
+        _skip_space_and_comments(stream, path)
+        if stream.peek(1)[:1] == b"}":
+            stream.read(1)  # Outer FoamFile close after the nested meta dictionary.
+        _skip_space_and_comments(stream, path)
+        count = _read_unsigned(stream, path, "zone count")
+        token(stream, b"(")
+        names = re.compile(rb"[A-Za-z0-9_.+-]+")
+        for _ in range(count):
+            _skip_space_and_comments(stream, path)
+            name = names.match(stream.peek())
+            require(name is not None, f"invalid zone name: {path}")
+            raw = stream.read(len(name[0]))
+            require(raw not in zones, f"duplicate zone {raw!r} in {path}")
+            for item in (b"{", b"type", b"cellZone", b";", b"cellLabels", b"List<label>"):
+                token(stream, item)
+            labels = foam_list(stream, path, binary)
+            _skip_space_and_comments(stream, path)
+            if stream.peek(1)[:1] == b";":
+                stream.read(1)
+            token(stream, b"}")
+            require(np.all((labels >= 0) & (labels < n_cells)), f"invalid cell label: {path}")
+            zones[raw] = labels
+        token(stream, b")")
+        require(comments_removed(stream.read()).strip() in (b"", b";"),
+                f"unexpected zone text: {path}")
+    return zones
+
+
+def write_cell_zones(path, zones):
+    with path.open("wb") as stream:
+        stream.write(b'FoamFile\n{ version 2.0; format binary; arch "LSB;label=32;scalar=64"; '
+                     b'class regIOobject; location "constant/polyMesh"; object cellZones;\n')
+        stream.write(b"meta { names ( " + b" ".join(zones) + b" ); }\n}\n")
+        stream.write(f"{len(zones)}\n(\n".encode())
+        for name, labels in zones.items():
+            stream.write(name + b"\n{ type cellZone; cellLabels List<label>\n")
+            stream.write(f"{labels.size}\n(".encode())
+            labels.astype(I32, copy=False).tofile(stream)
+            stream.write(b")\n; }\n")
+        stream.write(b")\n")
+
+
 def metadata(source, mesh, new_to_old, old_to_new, order):
     """Yield copies or remapped arrays for supported mesh metadata."""
     for name in sorted(EXTRAS - {"sets"}):
         path = source / name
         if not path.exists():
             continue
-        if name in ZONES:
+        if name == "cellZones":
+            zones = read_cell_zones(path, mesh.n_cells)
+            if zones:
+                yield Path(name), "cellZones", {zone: old_to_new[labels]
+                                               for zone, labels in zones.items()}
+                continue
+        elif name in ZONES:
             with foam_object(path, {"regIOobject", "cellZoneMesh", "faceZoneMesh",
                                     "pointZoneMesh"}) as (stream, _, _):
-                require(re.fullmatch(rb"\s*0\s*\(\s*\)\s*;?\s*",
-                                     comments_removed(stream.read())),
-                        f"nonempty or unsupported zone file: {path}")
+                body = comments_removed(stream.read())
+                empty = re.fullmatch(rb"\s*0\s*\(\s*\)\s*;?\s*", body)
+                # OpenFOAM can retain an empty named point zone in a nested
+                # FoamFile meta dictionary. Point labels are never renumbered.
+                if name == "pointZones" and not empty:
+                    empty = re.fullmatch(
+                        rb"\s*\}\s*1\s*\(\s*[\w.-]+\s*\{\s*"
+                        rb"type\s+pointZone\s*;\s*pointLabels\s+List<label>\s+0"
+                        rb"\s*(?:\(\s*\))?\s*;"
+                        rb"\s*\}\s*\)\s*;?\s*", body)
+                require(empty, f"nonempty or unsupported zone file: {path}")
         elif name in {"cellLevel", "surfaceIndex", "pointLevel"}:
             kind, (values,) = read_arrays(path, {"labelList"})
             size = {"cellLevel": mesh.n_cells, "surfaceIndex": mesh.n_faces,
@@ -314,6 +378,11 @@ def validate(experiment, source=None):
         if kind is None:
             require(digest(source / relative) == digest(output / relative),
                     f"{relative} changed")
+        elif kind == "cellZones":
+            actual = read_cell_zones(output / relative, new.n_cells)
+            require(list(actual) == list(values), "cell zone names changed")
+            for name, labels in values.items():
+                equal(actual[name], labels, f"cell zone {name!r}")
         else:
             _, (actual,) = read_arrays(output / relative, {kind})
             equal(actual, values, str(relative))
@@ -335,17 +404,56 @@ def renumber(args):
             f"output already exists: {destination}")
     require(source not in destination.parents, "output cannot be inside source mesh")
     mesh, offsets, vertices = load_mesh(source)
-    if args.algorithm == "existing":
+    algorithm = "original" if args.algorithm == "identity" else args.algorithm
+    optimization = None
+    partition_result = None
+    if algorithm == "existing":
         require(args.initial_permutation is not None, "existing requires --initial-permutation")
         with np.load(args.initial_permutation) as maps:
             new_to_old = maps["new_to_old"]
             equal(inverse(new_to_old, mesh.n_cells), maps["old_to_new"], "imported inverse")
+    elif algorithm == "locality":
+        from locality import optimize
+
+        require(args.initial_permutation is None, "locality always starts from Original numbering")
+        new_to_old, optimization = optimize(mesh, args)
+    elif algorithm == "cache-traversal":
+        from cache_traversal import run
+
+        require(args.initial_permutation is None, "cache-traversal starts from Original numbering")
+        provenance = source.parent / "config.json"
+        if provenance.is_file():
+            prior = json.loads(provenance.read_text())
+            require(not isinstance(prior, dict) or prior.get("algorithm") not in
+                    {"rcm", "locality", "cache-partition", "cache-traversal", "existing"},
+                    "pass the Original mesh to cache-traversal")
+        run(source, destination, mesh, offsets, vertices, args)
+        print(destination)
+        return
+    elif algorithm == "cache-partition":
+        from cache_partition import choose_partition
+
+        require(args.initial_permutation is None, "cache-partition starts from Original numbering")
+        provenance = source.parent / "config.json"
+        if provenance.is_file():
+            prior = json.loads(provenance.read_text())
+            require(prior.get("algorithm") not in {"rcm", "locality", "cache-partition", "existing"},
+                    "pass the Original mesh to cache-partition")
+        new_to_old, report, partition_arrays = choose_partition(mesh, args)
+        partition_result = (report, partition_arrays)
     else:
         require(args.initial_permutation is None, "permutation requires --algorithm existing")
         new_to_old = (rcm(mesh) if args.algorithm == "rcm"
                       else np.arange(mesh.n_cells, dtype=I32))
+    write_numbered_experiment(source, destination, mesh, offsets, vertices, algorithm,
+                              new_to_old, args, optimization, partition_result)
+    print(destination)
+
+
+def write_numbered_experiment(source, destination, mesh, offsets, vertices, algorithm,
+                              new_to_old, args, optimization=None, partition_result=None):
     old_to_new = inverse(new_to_old, mesh.n_cells)
-    owner, neighbour, order, flipped = remap(mesh, old_to_new, args.algorithm == "identity")
+    owner, neighbour, order, flipped = remap(mesh, old_to_new, algorithm == "original")
     destination.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=destination.parent, prefix=".renumber-") as temp:
         experiment = Path(temp)
@@ -362,6 +470,8 @@ def renumber(args):
             target.parent.mkdir(exist_ok=True)
             if kind is None:
                 shutil.copyfile(source / relative, target)
+            elif kind == "cellZones":
+                write_cell_zones(target, values)
             else:
                 location = "constant/polyMesh"
                 if relative.parent != Path("."):
@@ -369,30 +479,107 @@ def renumber(args):
                 write_arrays(target, kind, [values], location=location)
         np.savez(experiment / "permutation.npz", new_to_old=new_to_old,
                  old_to_new=old_to_new, new_face_to_old=order, face_flipped=flipped)
-        json_write(experiment / "config.json", {"source": str(source), "algorithm": args.algorithm})
+        config = {"source": str(source), "algorithm": algorithm,
+                  "source_topology_sha256": mesh.topology_checksum()}
+        if optimization is not None:
+            from locality import match_metrics
+
+            match_metrics(read_poly_mesh(output), optimization["final"])
+            require(optimization["final"]["coefficient_transitions"]
+                    <= optimization["coefficient_limit"], "coefficient locality limit exceeded")
+            optimization["settings"]["optimizer_sha256"] = digest(args.optimizer)
+            config["optimization"] = optimization["settings"]
+            json_write(experiment / "optimization.json", optimization)
+        if partition_result is not None:
+            report, partition_arrays = partition_result
+            report["settings"]["partition_backend_sha256"] = digest(args.partition_backend)
+            report["settings"]["working_set_backend_sha256"] = digest(args.partition_ws_backend)
+            config["partition"] = report["settings"]
+            json_write(experiment / "partition.json", report)
+            np.savez(experiment / "partitions.npz", **partition_arrays)
+        json_write(experiment / "config.json", config)
         json_write(experiment / "validation.json", validate(experiment))
         # Reserve the path before moving files, so even an empty existing output is protected.
         destination.mkdir()
         experiment.replace(destination)
-    print(destination)
 
 
 def main():
     from experiment_stages import analyze, benchmark, compare
+    from working_set import DEFAULT_CAPACITIES, DEFAULT_WINDOWS, analyze_locality
+
+    def positive_list(value):
+        try:
+            values = tuple(map(int, value.split(",")))
+        except ValueError as error:
+            raise argparse.ArgumentTypeError("expected comma separated integers") from error
+        if any(x <= 0 for x in values) or len(set(values)) != len(values):
+            raise argparse.ArgumentTypeError("expected distinct positive integers")
+        return values
 
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     generate = commands.add_parser("renumber")
     generate.add_argument("--mesh", type=Path, required=True)
-    generate.add_argument("--output", type=Path, required=True)
-    generate.add_argument("--algorithm", choices=("identity", "rcm", "existing"), required=True)
+    generate.add_argument("--output", "--output-dir", type=Path, required=True)
+    generate.add_argument("--algorithm", metavar="{original,rcm,locality,cache-partition,cache-traversal,existing}",
+                          choices=("original", "rcm", "locality", "cache-partition", "cache-traversal", "existing", "identity"),
+                          required=True)
+    generate.add_argument("--initial", choices=("original",), default="original")
+    generate.add_argument("--objective", choices=("total", "balanced"), default="total")
+    generate.add_argument("--balance-weight", "--lambda", type=float, default=0.5)
+    generate.add_argument("--coeff-tolerance", type=float, default=0.0)
+    generate.add_argument("--candidates", type=int, default=1_000_000)
+    generate.add_argument("--window", type=int, default=16)
+    generate.add_argument("--seed", type=int, default=42)
+    generate.add_argument("--patience", type=int, default=100_000)
+    generate.add_argument("--verify-every", type=int, default=100_000)
+    generate.add_argument("--optimizer", type=Path, default=Path(
+        __file__).resolve().parents[1] / "experiments/build/locality_optimizer")
     generate.add_argument("--initial-permutation", type=Path)
+    generate.add_argument("--partition-budget-kib", type=int, default=64)
+    generate.add_argument("--partition-seed", type=int, default=42)
+    generate.add_argument("--partition-local-order", choices=("auto", "traversal", "rcm"), default="auto")
+    generate.add_argument("--partition-coarse-order", choices=("auto", "breadth", "depth"), default="auto")
+    generate.add_argument("--partition-coeff-tolerance", type=float, default=0.0)
+    generate.add_argument("--partition-lru", action="store_true")
+    generate.add_argument("--partition-cache-kib", type=positive_list, default=(32, 64, 256, 1024))
+    build_dir = Path(__file__).resolve().parents[1] / "experiments/build"
+    generate.add_argument("--partition-backend", type=Path, default=build_dir / "cache_partition_backend")
+    generate.add_argument("--partition-ws-backend", type=Path, default=build_dir / "working_set_backend")
+    def weights(value):
+        try:
+            values = tuple(float(x) for x in value.split(","))
+        except ValueError as error:
+            raise argparse.ArgumentTypeError("expected four comma separated weights") from error
+        if len(values) != 4:
+            raise argparse.ArgumentTypeError("expected weights NEW,REUSE,SPAN,FRONT")
+        return values
+
+    generate.add_argument("--traversal-profile", choices=("auto", "breadth", "reuse", "balanced"),
+                          default="auto")
+    generate.add_argument("--traversal-weights", type=weights, metavar="NEW,REUSE,SPAN,FRONT")
+    generate.add_argument("--traversal-frontier-scan", type=int)
+    generate.add_argument("--traversal-recent-rows", type=int, default=128)
+    generate.add_argument("--traversal-root", choices=("seed", "peripheral", "centre"))
+    generate.add_argument("--traversal-seed", type=int, default=42)
+    generate.add_argument("--traversal-verify-every", type=int, default=0)
+    generate.add_argument("--traversal-coeff-tolerance", type=float, default=0.0)
+    generate.add_argument("--traversal-schedule-width", type=int, default=1024)
+    generate.add_argument("--traversal-cache-kib", type=positive_list, default=(32, 64, 256, 1024))
+    generate.add_argument("--max-wave-ratio", type=float, default=1.5)
+    generate.add_argument("--min-median-wave-width", type=int, default=512)
+    generate.add_argument("--traversal-backend", type=Path, default=build_dir / "cache_traversal_backend")
+    generate.add_argument("--traversal-ws-backend", type=Path, default=build_dir / "working_set_backend")
+    generate.add_argument("--traversal-layout-probe", type=Path, default=build_dir / "gs_layout")
     check = commands.add_parser("validate")
     check.add_argument("--experiment", type=Path, required=True)
     check.add_argument("--mesh", type=Path, help="override the original source path")
     analysis = commands.add_parser("analyze")
     analysis.add_argument("--experiment", type=Path, required=True)
     analysis.add_argument("--centres-export", type=Path)
+    analysis.add_argument("--layout-probe", type=Path)
+    analysis.add_argument("--layout-width", type=int, default=1024)
     timing = commands.add_parser("benchmark")
     timing.add_argument("--experiment", type=Path, required=True)
     timing.add_argument("--probe", type=Path, default=Path(
@@ -405,6 +592,16 @@ def main():
     comparison.add_argument("runs", type=Path, nargs="+")
     comparison.add_argument("--tomography", type=Path)
     comparison.add_argument("--centres-export", type=Path)
+    diagnostic = commands.add_parser("analyze-locality")
+    diagnostic.add_argument("--mesh", type=Path, required=True)
+    diagnostic.add_argument("--output-dir", "--output", type=Path, required=True)
+    diagnostic.add_argument("--window-sizes", type=positive_list, default=DEFAULT_WINDOWS)
+    diagnostic.add_argument("--stride", type=int, help="override the stride for every window size")
+    diagnostic.add_argument("--reuse-distance", action="store_true")
+    diagnostic.add_argument("--cache-kib", type=positive_list, default=DEFAULT_CAPACITIES)
+    diagnostic.add_argument("--face-permutation", type=Path)
+    diagnostic.add_argument("--backend", type=Path, default=Path(
+        __file__).resolve().parents[1] / "experiments/build/working_set_backend")
     args = parser.parse_args()
     try:
         if args.command == "renumber":
@@ -412,7 +609,8 @@ def main():
         elif args.command == "validate":
             print(json.dumps(validate(args.experiment, args.mesh), indent=2))
         else:
-            {"analyze": analyze, "benchmark": benchmark, "compare": compare}[args.command](args)
+            {"analyze": analyze, "benchmark": benchmark, "compare": compare,
+             "analyze-locality": analyze_locality}[args.command](args)
     except (RuntimeError, OSError, ValueError, KeyError, CalledProcessError) as error:
         parser.exit(1, f"error: {error}\n")
 

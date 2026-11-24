@@ -7,6 +7,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -67,9 +68,35 @@ double millis(Clock::time_point start)
     return std::chrono::duration<double, std::milli>(Clock::now() - start).count();
 }
 
+// Opt-in perf stat control. The PMU stays disabled for mesh setup,
+// validation, warmup, and psi resets. This only instruments the driver.
+class PerfControl
+{
+    std::ofstream control_;
+    std::ifstream ack_;
+
+public:
+    PerfControl(const char* control, const char* ack)
+        : control_(control), ack_(ack)
+    {
+        check(bool(control_) && bool(ack_), "cannot open perf control FIFOs");
+    }
+
+    void send(const char* action)
+    {
+        control_ << action << std::endl;
+        std::string reply;
+        check(bool(control_) && bool(std::getline(ack_, reply)), "missing perf acknowledgement");
+        // perf versions that write the terminating NUL leave it before
+        // the next reply when the stream is read one line at a time.
+        reply.erase(std::remove(reply.begin(), reply.end(), '\0'), reply.end());
+        check(reply == "ack", "unexpected perf acknowledgement");
+    }
+};
+
 template<class Solve>
 void measure(const std::string& id, int threads, const scalarField& source,
-             Solve solve, int sweeps, int repetitions, double setup)
+             Solve solve, int sweeps, int repetitions, double setup, PerfControl* perf = nullptr)
 {
     omp_set_num_threads(threads);
     int actual = 0;
@@ -86,9 +113,11 @@ void measure(const std::string& id, int threads, const scalarField& source,
     for (int i = 0; i < repetitions; ++i)
     {
         std::fill(psi.begin(), psi.end(), 0.0);
+        if (perf) perf->send("enable");
         const auto start = Clock::now();
         solve(psi, sweeps);
         const double elapsed = millis(start);
+        if (perf) perf->send("disable");
         check(std::isfinite(psi.front()), "nonfinite timed result");
         std::cout << "sample," << id << ',' << threads << ',' << i
                   << ',' << elapsed / sweeps << ',' << setup << '\n';
@@ -167,6 +196,15 @@ try
     check(residual < 1e-10, "GS residual too large");
     std::cout << "validation," << centreError << ',' << residual << ','
               << solutionError << ',' << crossError << ',' << oneSweepDelta << '\n';
+    const auto* control = std::getenv("MESH_PMU_CONTROL");
+    const auto* ack = std::getenv("MESH_PMU_ACK");
+    if (control || ack)
+    {
+        check(control && ack && threads == 1, "perf control requires both FIFOs and single-thread GS");
+        PerfControl perf(control, ack);
+        measure("OriginalGS", 1, source, gs, sweeps, repetitions, loadMs, &perf);
+        return 0;
+    }
     for (int arg = 8; arg < argc; ++arg)
     {
         const int width = std::stoi(argv[arg]);

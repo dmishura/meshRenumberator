@@ -134,6 +134,37 @@ class MeshRenumberCliTest(unittest.TestCase):
         result = self.run_cli("validate", "--experiment", str(experiment))
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_rcm_remaps_binary_cell_zones(self) -> None:
+        from mesh_renumber import read_cell_zones
+
+        zones = self.mesh / "cellZones"
+        original = (
+            b"FoamFile\n{ format binary; class regIOobject; object cellZones;\n"
+            b"meta { names (left right); }\n}\n2\n(\n"
+            b"left { type cellZone; cellLabels List<label> 1\n("
+            + struct.pack("<i", 0)
+            + b")\n; }\nright { type cellZone; cellLabels List<label> 1\n("
+            + struct.pack("<i", 1)
+            + b")\n; }\n)\n"
+        )
+        zones.write_bytes(original)
+        experiment = self.renumber("rcm")
+        self.assertEqual(zones.read_bytes(), original)
+        generated = read_cell_zones(experiment / "polyMesh" / "cellZones", 2)
+        self.assertEqual({name: labels.tolist() for name, labels in generated.items()},
+                         {b"left": [1], b"right": [0]})
+
+    def test_existing_empty_point_zone_is_preserved(self) -> None:
+        zones = self.mesh / "pointZones"
+        original = (
+            b"FoamFile\n{ format binary; class regIOobject; object pointZones;\n"
+            b"meta { names (frozenPoints); }\n}\n"
+            b"1\n(\nfrozenPoints { type pointZone; pointLabels List<label> 0(); }\n)\n"
+        )
+        zones.write_bytes(original)
+        experiment = self.renumber("rcm")
+        self.assertEqual((experiment / "polyMesh" / "pointZones").read_bytes(), original)
+
     def test_unknown_metadata_is_rejected(self) -> None:
         (self.mesh / "boundary").write_text(
             "FoamFile\n{ format ascii; class polyBoundaryMesh; object boundary; }\n"
