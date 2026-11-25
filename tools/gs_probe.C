@@ -2,6 +2,10 @@
 #include "GAMGKernels.H"
 #include "ScheduleBuilder.H"
 #include "fwMatrix.H"
+#include "gs_window4.H"
+#include "gs_minimal4.H"
+#include "gs_minimal_opt.H"
+#include <cstring>
 
 #include <algorithm>
 #include <chrono>
@@ -196,11 +200,107 @@ try
     check(residual < 1e-10, "GS residual too large");
     std::cout << "validation," << centreError << ',' << residual << ','
               << solutionError << ',' << crossError << ',' << oneSweepDelta << '\n';
+    const auto* experimental = std::getenv("MESH_GS_VARIANT");
+    const auto* pmuSelection = std::getenv("MESH_PMU_KERNEL");
+    if (!experimental && pmuSelection && (std::string(pmuSelection) == "SWnd4" || std::string(pmuSelection) == "SWndReload4" || std::string(pmuSelection) == "MinimalReload4" || std::string(pmuSelection) == "Padded4" || std::string(pmuSelection) == "OptimizedMinimalReload4"))
+        experimental = pmuSelection;
+    if (experimental && std::string(experimental) == "OptimizedMinimalReload4") {
+        gsExperiment::MinimalOptData data(ldu);
+        const auto run = [&](scalarField& psi,int count) {
+            gsExperiment::optimizedMinimal4(psi,ldu,source,count,data);
+        };
+        scalarField result(output.nCells,0.0);
+        run(result,1);
+        check(std::memcmp(result.data(),reference.data(),reference.size()*sizeof(double))==0,
+              "optimized one sweep differs bitwise");
+        run(result,191);
+        check(std::memcmp(result.data(),converged.data(),reference.size()*sizeof(double))==0,
+              "optimized 192 sweeps differ bitwise");
+        std::cout << "optimized_validation,bitwise_one_and_192_passed," << data.terminalRow << '\n';
+        if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
+        const auto* ctl=std::getenv("MESH_PMU_CONTROL");
+        const auto* ackPath=std::getenv("MESH_PMU_ACK");
+        if (ctl && ackPath) {
+            PerfControl perf(ctl,ackPath);
+            measure("OptimizedMinimalReload4",1,source,run,sweeps,repetitions,loadMs,&perf);
+        } else measure("OptimizedMinimalReload4",1,source,run,sweeps,repetitions,loadMs);
+        return 0;
+    }
+    if (experimental)
+    {
+        const std::string name(experimental);
+        check(name == "SWndReload4" || name == "SWnd4" || name == "MinimalReload4" || name == "Padded4", "unknown experimental GS variant");
+        gsExperiment::Minimal4Data prepared(ldu, name == "Padded4");
+        std::cout << "gather_preparation," << name << ',' << prepared.indices.size()
+                  << ',' << prepared.preprocessingMs << '\n';
+        const auto run = [&](scalarField& psi, int count) {
+            if (name == "Padded4") {
+                if (psi.size() == source.size()) psi.push_back(0.0);
+                gsExperiment::minimal4<true>(psi,ldu,source,count,prepared);
+                return;
+            }
+            if (name == "MinimalReload4") {
+                gsExperiment::minimal4<false>(psi,ldu,source,count,prepared);
+                return;
+            }
+            if (name == "SWnd4") gsExperiment::smooth<true>(psi, ldu, source, count, &prepared.bPrime);
+            else gsExperiment::smooth<false>(psi, ldu, source, count, &prepared.bPrime);
+        };
+        scalarField result(output.nCells, 0.0);
+        run(result, 1);
+        check(std::memcmp(result.data(), reference.data(), reference.size()*sizeof(double)) == 0,
+              "experimental GS one sweep differs bitwise");
+        run(result, 191);
+        check(std::memcmp(result.data(), converged.data(), reference.size()*sizeof(double)) == 0,
+              "experimental GS convergence differs bitwise");
+        if (name == "Padded4")
+            check(result.back() == 0.0 && !std::signbit(result.back()),
+                  "Padded4 sentinel changed");
+        if (std::getenv("MESH_GS_VALIDATE_ONLY")) {
+            std::cout << "experimental_validation," << name
+                      << ",bitwise_one_and_192_sweeps_passed\n";
+            return 0;
+        }
+        const auto* ctl = std::getenv("MESH_PMU_CONTROL");
+        const auto* ackPath = std::getenv("MESH_PMU_ACK");
+        if (ctl && ackPath) {
+            PerfControl perf(ctl, ackPath);
+            measure(name.c_str(), 1, source, run, sweeps, repetitions, loadMs, &perf);
+        } else measure(name.c_str(), 1, source, run, sweeps, repetitions, loadMs);
+        return 0;
+    }
     const auto* control = std::getenv("MESH_PMU_CONTROL");
     const auto* ack = std::getenv("MESH_PMU_ACK");
     if (control || ack)
     {
         check(control && ack && threads == 1, "perf control requires both FIFOs and single-thread GS");
+        const auto* kernel = std::getenv("MESH_PMU_KERNEL");
+        const std::string selected = kernel ? kernel : "OriginalGS";
+        if (selected == "IH1W1024")
+        {
+            check(argc >= 9 && std::stoi(argv[8]) == 1024,
+                  "IH1 perf control requires width 1024");
+            const auto ih1 = fw::Matrix::build(native, 1024);
+            const auto packedSource = gather(source, ih1.newToOld());
+            const auto packedReference = gather(reference, ih1.newToOld());
+            const auto packedConverged = gather(converged, ih1.newToOld());
+            const auto smooth = [&](scalarField& psi, int count)
+            {
+                ih1.smooth(psi, packedSource, count, false);
+            };
+            scalarField checkPsi(output.nCells, 0.0);
+            smooth(checkPsi, 1);
+            check(maxError(checkPsi, packedReference) == 0,
+                  "IH1 PMU path one-sweep correctness failed");
+            smooth(checkPsi, 191);
+            check(maxError(checkPsi, packedConverged) < 1e-11,
+                  "IH1 PMU path convergence correctness failed");
+            PerfControl perf(control, ack);
+            measure("IH1W1024", 1, packedSource, smooth, sweeps, repetitions,
+                    loadMs, &perf);
+            return 0;
+        }
+        check(selected == "OriginalGS", "unsupported PMU kernel selection");
         PerfControl perf(control, ack);
         measure("OriginalGS", 1, source, gs, sweeps, repetitions, loadMs, &perf);
         return 0;

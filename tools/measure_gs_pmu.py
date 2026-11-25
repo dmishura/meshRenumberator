@@ -18,16 +18,21 @@ import numpy as np
 # Keep groups small, qualify events to the pinned P-core PMU, and verify
 # coverage. Cycles and instructions are paired for per-sample IPC.
 DEFAULT_GROUPS = [
-    ["cycles", "instructions", "cache-references", "cache-misses"],
-    ["L1-dcache-loads", "L1-dcache-load-misses", "LLC-loads", "LLC-load-misses"],
-    ["dTLB-loads", "dTLB-load-misses", "cycle_activity.cycles_mem_any",
-     "cycle_activity.stalls_total"],
-    ["mem_load_retired.l3_miss", "dtlb_load_misses.walk_completed"],
+    ["cycles", "instructions"],
+    ["task-clock", "cpu-migrations"],
+    ["l1d_miss.load", "mem_load_retired.l1_hit", "mem_load_retired.l1_miss"],
+    ["l2_rqsts.all_demand_data_rd", "l2_rqsts.demand_data_rd_miss"],
+    ["mem_load_retired.l3_hit", "mem_load_retired.l3_miss"],
+    ["dtlb_load_misses.walk_completed"],
+    ["cycle_activity.cycles_mem_any", "cycle_activity.stalls_total"],
+    ["l1d_miss.fb_full", "l1d_miss.l2_stalls", "l1d_pending.load_cycles"],
 ]
 
 
 def event_spec(events):
-    qualified = ",".join(f"cpu_core/{event}/u" for event in events)
+    generic = {"task-clock", "cpu-migrations"}
+    qualified = ",".join(event if event in generic else f"cpu_core/{event}/u"
+                         for event in events)
     return "{" + qualified + "}" if len(events) > 1 else qualified
 
 
@@ -87,8 +92,13 @@ def perf_rows(path: Path) -> list[dict]:
                 coverage = float(fields[4].strip().rstrip("%"))
             except (IndexError, ValueError):
                 coverage = None
+            try:
+                running_time_ns = int(fields[3].strip())
+            except (IndexError, ValueError):
+                running_time_ns = None
             rows.append({"event": event_name(event), "count": count, "raw_count": raw,
                          "coverage_percent": coverage, "unavailable": count is None})
+            rows[-1]["perf_running_time_ns"] = running_time_ns
     return rows
 
 
@@ -101,7 +111,8 @@ def experiment_dirs(root: Path) -> list[Path]:
 
 def measure_one(exp: Path, probe: Path, output: Path, samples: int,
                 groups: list[list[str]], cpu_set: str, sweeps: int,
-                width: int, perf: str, taskset: str) -> list[dict]:
+                width: int, perf: str, taskset: str, kernel: str = "OriginalGS",
+                sample_offset: int = 0) -> list[dict]:
     validation = json.loads((exp / "validation.json").read_text())
     nfaces = validation.get("internal_faces")
     if nfaces is None:
@@ -123,7 +134,8 @@ def measure_one(exp: Path, probe: Path, output: Path, samples: int,
             if faces.size < nfaces:
                 raise ValueError(f"{exp}: face permutation shorter than internal_faces")
             faces[:nfaces].tofile(temp / "faces.bin")
-        for sample in range(samples):
+        for local_sample in range(samples):
+            sample = sample_offset + local_sample
             for group_index, events in enumerate(groups):
                 prefix = f"sample-{sample:02d}-group-{group_index:02d}"
                 logfile = output / f"{prefix}.perf.csv"
@@ -132,6 +144,7 @@ def measure_one(exp: Path, probe: Path, output: Path, samples: int,
                 os.mkfifo(ack)
                 env = os.environ.copy()
                 env.update({"MESH_PMU_CONTROL": str(ctl), "MESH_PMU_ACK": str(ack),
+                            "MESH_PMU_KERNEL": kernel,
                             "OMP_PROC_BIND": "close", "OMP_PLACES": "cores",
                             "OMP_DYNAMIC": "FALSE"})
                 probe_cmd = [str(probe), str(source), str(exp / "polyMesh"),
@@ -141,9 +154,11 @@ def measure_one(exp: Path, probe: Path, output: Path, samples: int,
                            f"--control=fifo:{ctl},{ack}", "-x", ",", "-o", str(logfile),
                            "-e", event_spec(events), "--", *probe_cmd]
                 # Probe performs validation and warmup before enabling the counters.
+                freq_before = cpu_frequency_khz(cpu_set)
                 with (output / f"{prefix}.stdout.log").open("w") as stdout:
                     proc = subprocess.run(command, stdout=stdout, stderr=subprocess.STDOUT,
                                           env=env, timeout=45)
+                freq_after = cpu_frequency_khz(cpu_set)
                 try:
                     ctl.unlink()
                     ack.unlink()
@@ -153,7 +168,7 @@ def measure_one(exp: Path, probe: Path, output: Path, samples: int,
                     raise RuntimeError(f"perf/probe failed ({proc.returncode}); see {output / (prefix + '.stdout.log')}")
                 parsed = {row["event"]: row for row in perf_rows(logfile)}
                 sample_lines = [line for line in (output / f"{prefix}.stdout.log").read_text().splitlines()
-                                if line.startswith("sample,OriginalGS,1,")]
+                                if line.startswith(f"sample,{kernel},1,")]
                 if len(sample_lines) != 1:
                     raise RuntimeError("expected exactly one measured GS batch")
                 ms = float(sample_lines[0].split(",")[4])
@@ -163,6 +178,9 @@ def measure_one(exp: Path, probe: Path, output: Path, samples: int,
                     item.update({"experiment": exp.name, "sample": sample,
                                  "group": group_index, "requested_events": ";".join(events),
                                  "log": logfile.name, "ms_per_sweep": ms,
+                                 "cpu_freq_before_khz": freq_before,
+                                 "cpu_freq_after_khz": freq_after,
+                                 "perf_running_time_ns": item.get("perf_running_time_ns"),
                                  "count_per_sweep": item["count"] / sweeps
                                  if item["count"] is not None else None})
                     rows.append(item)
@@ -179,6 +197,17 @@ def stats(samples):
             "median": float(np.median(samples)) if samples else None,
             "sample_stdev": float(np.std(samples, ddof=1)) if len(samples) > 1 else None,
             "min": min(samples) if samples else None, "max": max(samples) if samples else None}
+
+
+def cpu_frequency_khz(cpu_set: str):
+    """Best-effort instantaneous cpufreq sysfs reading for a pinned CPU."""
+    if not cpu_set.isdecimal():
+        return None
+    path = Path(f"/sys/devices/system/cpu/cpu{cpu_set}/cpufreq/scaling_cur_freq")
+    try:
+        return int(path.read_text().strip())
+    except (OSError, ValueError):
+        return None
 
 
 def summarize(rows):
@@ -215,6 +244,9 @@ def main() -> None:
     parser.add_argument("--cpus", default="0,1,2,3")
     parser.add_argument("--sweeps", type=int, default=64)
     parser.add_argument("--width", type=int, default=1024)
+    parser.add_argument("--kernel", choices=("OriginalGS", "IH1W1024", "SWndReload4", "SWnd4", "MinimalReload4", "Padded4", "OptimizedMinimalReload4"), default="OriginalGS")
+    parser.add_argument("--interleave-order",
+                        help="comma-separated experiment names; measurement rounds alternate forward and reverse")
     parser.add_argument("--perf", default="perf")
     parser.add_argument("--taskset", default="taskset")
     selection = parser.add_mutually_exclusive_group()
@@ -227,8 +259,8 @@ def main() -> None:
     if not args.probe.is_file():
         parser.error(f"probe not found: {args.probe}")
     experiments = experiment_dirs(args.input_root.resolve())
-    if len(experiments) != 4:
-        parser.error(f"expected four experiment directories under {args.input_root}, found {len(experiments)}")
+    if not experiments:
+        parser.error(f"no experiment directories found under {args.input_root}")
     if args.event_group is not None:
         groups = [[event.strip() for event in group.split(",") if event.strip()]
                   for group in args.event_group]
@@ -245,18 +277,29 @@ def main() -> None:
         raise RuntimeError(f"no accessible hardware counters; see {output_root}")
     all_rows = []
     summaries = {}
+    interleave = ([name.strip() for name in args.interleave_order.split(",")]
+                  if args.interleave_order else [exp.name for exp in experiments])
+    by_name = {exp.name: exp for exp in experiments}
+    if len(interleave) != len(set(interleave)) or set(interleave) != set(by_name):
+        parser.error("--interleave-order must list each experiment directory exactly once")
     lock_path = args.input_root.resolve().parent / ".benchmark.lock"
     with lock_path.open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        for exp in experiments:
-            rows = measure_one(exp, args.probe.resolve(), output_root / exp.name,
-                               args.samples, groups, args.cpus, args.sweeps,
-                               args.width, args.perf, args.taskset)
-            all_rows.extend(rows)
-            summaries[exp.name] = summarize(rows)
+        for sample in range(args.samples):
+            order = interleave if sample % 2 == 0 else list(reversed(interleave))
+            for name in order:
+                exp = by_name[name]
+                rows = measure_one(exp, args.probe.resolve(), output_root / exp.name,
+                                   1, groups, args.cpus, args.sweeps,
+                                   args.width, args.perf, args.taskset,
+                                   args.kernel, sample)
+                all_rows.extend(rows)
+                summaries.setdefault(exp.name, []).extend(rows)
+        summaries = {name: summarize(rows) for name, rows in summaries.items()}
     fields = ["experiment", "sample", "group", "event", "count", "raw_count",
               "coverage_percent", "unavailable", "requested_events", "log",
-              "count_per_sweep", "ms_per_sweep"]
+              "count_per_sweep", "ms_per_sweep", "cpu_freq_before_khz",
+              "cpu_freq_after_khz", "perf_running_time_ns"]
     with (output_root / "hardware_counters.csv").open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()
@@ -264,7 +307,8 @@ def main() -> None:
     (output_root / "summaries.json").write_text(json.dumps({
         "settings": {"samples": args.samples, "cpus": args.cpus,
                      "sweeps": args.sweeps, "width": args.width,
-                                          "events": groups, "unavailable_events": unavailable,
+                     "kernel": args.kernel, "interleave_order": interleave,
+                     "events": groups, "unavailable_events": unavailable,
                      "probe": str(args.probe.resolve()),
                      "probe_sha256": hashlib.sha256(args.probe.read_bytes()).hexdigest()},
         "experiments": summaries,
