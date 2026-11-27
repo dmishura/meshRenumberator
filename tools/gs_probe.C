@@ -5,6 +5,9 @@
 #include "gs_window4.H"
 #include "gs_minimal4.H"
 #include "gs_minimal_opt.H"
+#include "gs_m7.H"
+#include "gs_m74d.H"
+#include "gs_m8.H"
 #include <cstring>
 
 #include <algorithm>
@@ -202,8 +205,82 @@ try
               << solutionError << ',' << crossError << ',' << oneSweepDelta << '\n';
     const auto* experimental = std::getenv("MESH_GS_VARIANT");
     const auto* pmuSelection = std::getenv("MESH_PMU_KERNEL");
-    if (!experimental && pmuSelection && (std::string(pmuSelection) == "SWnd4" || std::string(pmuSelection) == "SWndReload4" || std::string(pmuSelection) == "MinimalReload4" || std::string(pmuSelection) == "Padded4" || std::string(pmuSelection) == "OptimizedMinimalReload4"))
+    if (!experimental && pmuSelection && (std::string(pmuSelection) == "M7" || std::string(pmuSelection) == "M7.4d" || std::string(pmuSelection) == "M8a" || std::string(pmuSelection) == "M8b" || std::string(pmuSelection) == "M8c" || std::string(pmuSelection) == "SWnd4" || std::string(pmuSelection) == "SWndReload4" || std::string(pmuSelection) == "MinimalReload4" || std::string(pmuSelection) == "Padded4" || std::string(pmuSelection) == "OptimizedMinimalReload4" || std::string(pmuSelection) == "OptimizedMinimalReload4OverlappingMasks" || std::string(pmuSelection) == "OptimizedMinimalReload4SimplifiedMaskIndex" || std::string(pmuSelection) == "OptimizedMinimalReload4RemainingCount" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGpr" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprOverlappingMasks" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprMemoryZero" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminal" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminalMemoryZero"))
         experimental = pmuSelection;
+    if (!experimental && pmuSelection &&
+        (std::string(pmuSelection) == "OptimizedMinimalReload4MaskedScatterBasic" ||
+         std::string(pmuSelection) == "OptimizedMinimalReload4MaskedScatterShared"))
+        experimental = pmuSelection;
+    if (experimental && (std::string(experimental) == "M8a" ||
+                         std::string(experimental) == "M8b" ||
+                         std::string(experimental) == "M8c")) {
+        const std::string name(experimental);
+        gsExperiment::MinimalOptData data(ldu);
+        const auto validateAndMeasure = [&](auto run) {
+            scalarField result(output.nCells,0.0);
+            run(result,1);
+            check(std::memcmp(result.data(),reference.data(),reference.size()*sizeof(double))==0,
+                  "M8 one-sweep result differs bitwise");
+            run(result,191);
+            check(std::memcmp(result.data(),converged.data(),converged.size()*sizeof(double))==0,
+                  "M8 192-sweep result differs bitwise");
+            std::cout << name << "_validation,bitwise_one_and_192_passed,"
+                      << data.terminalRow << '\n';
+            if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
+            const auto* ctl=std::getenv("MESH_PMU_CONTROL");
+            const auto* ackPath=std::getenv("MESH_PMU_ACK");
+            if (ctl && ackPath) {
+                PerfControl perf(ctl,ackPath);
+                measure(name,1,source,run,sweeps,repetitions,loadMs,&perf);
+            } else measure(name,1,source,run,sweeps,repetitions,loadMs);
+            return 0;
+        };
+        if (name == "M8a") {
+            const auto run = [&](scalarField& psi,int count) {
+                gsExperiment::cacheHybridM8<0>(psi,ldu,source,count,data);
+            };
+            return validateAndMeasure(run);
+        }
+        if (name == "M8b") {
+            const auto run = [&](scalarField& psi,int count) {
+                gsExperiment::cacheHybridM8<1>(psi,ldu,source,count,data);
+            };
+            return validateAndMeasure(run);
+        }
+        const auto run = [&](scalarField& psi,int count) {
+            gsExperiment::cacheHybridM8<2>(psi,ldu,source,count,data);
+        };
+        return validateAndMeasure(run);
+    }
+    if (experimental &&
+        (std::string(experimental) == "OptimizedMinimalReload4MaskedScatterBasic" ||
+         std::string(experimental) == "OptimizedMinimalReload4MaskedScatterShared")) {
+        const bool shared = std::string(experimental) == "OptimizedMinimalReload4MaskedScatterShared";
+        gsExperiment::MaskedScatterData data(ldu);
+        const auto run = [&](scalarField& psi, int count) {
+            if (shared)
+                gsExperiment::optimizedMinimal4MaskedScatter<true>(psi,ldu,source,count,data);
+            else
+                gsExperiment::optimizedMinimal4MaskedScatter<false>(psi,ldu,source,count,data);
+        };
+        scalarField result(output.nCells,0.0);
+        run(result,1);
+        check(std::memcmp(result.data(),reference.data(),reference.size()*sizeof(double))==0,
+              "masked-scatter one sweep differs bitwise");
+        run(result,191);
+        check(std::memcmp(result.data(),converged.data(),reference.size()*sizeof(double))==0,
+              "masked-scatter 192 sweeps differ bitwise");
+        std::cout << "masked_scatter_validation," << experimental
+                  << ",bitwise_one_and_192_passed," << data.base.terminalRow << '\n';
+        if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
+        const auto* ctl=std::getenv("MESH_PMU_CONTROL");
+        const auto* ackPath=std::getenv("MESH_PMU_ACK");
+        if (ctl && ackPath) {
+            PerfControl perf(ctl,ackPath);
+            measure(experimental,1,source,run,sweeps,repetitions,loadMs,&perf);
+        } else measure(experimental,1,source,run,sweeps,repetitions,loadMs);
+        return 0;
+    }
     if (experimental && std::string(experimental) == "OptimizedMinimalReload4") {
         gsExperiment::MinimalOptData data(ldu);
         const auto run = [&](scalarField& psi,int count) {
@@ -225,6 +302,187 @@ try
             measure("OptimizedMinimalReload4",1,source,run,sweeps,repetitions,loadMs,&perf);
         } else measure("OptimizedMinimalReload4",1,source,run,sweeps,repetitions,loadMs);
         return 0;
+    }
+    if (experimental && std::string(experimental) == "OptimizedMinimalReload4OverlappingMasks") {
+        gsExperiment::MinimalOptData data(ldu);
+        const auto run = [&](scalarField& psi,int count) {
+            gsExperiment::optimizedMinimal4OverlappingMasks(psi,ldu,source,count,data);
+        };
+        scalarField result(output.nCells,0.0);
+        run(result,1);
+        check(std::memcmp(result.data(),reference.data(),reference.size()*sizeof(double))==0,
+              "overlapping-mask one sweep differs bitwise");
+        run(result,191);
+        check(std::memcmp(result.data(),converged.data(),reference.size()*sizeof(double))==0,
+              "overlapping-mask 192 sweeps differ bitwise");
+        std::cout << "overlapping_mask_validation,bitwise_one_and_192_passed,"
+                  << data.terminalRow << '\n';
+        if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
+        const auto* ctl=std::getenv("MESH_PMU_CONTROL");
+        const auto* ackPath=std::getenv("MESH_PMU_ACK");
+        if (ctl && ackPath) {
+            PerfControl perf(ctl,ackPath);
+            measure("OptimizedMinimalReload4OverlappingMasks",1,source,run,
+                    sweeps,repetitions,loadMs,&perf);
+        } else measure("OptimizedMinimalReload4OverlappingMasks",1,source,run,
+                       sweeps,repetitions,loadMs);
+        return 0;
+    }
+    if (experimental && std::string(experimental) == "OptimizedMinimalReload4SimplifiedMaskIndex") {
+        gsExperiment::MinimalOptData data(ldu);
+        const auto run = [&](scalarField& psi,int count) {
+            gsExperiment::optimizedMinimal4SimplifiedMaskIndex(psi,ldu,source,count,data);
+        };
+        scalarField result(output.nCells,0.0);
+        run(result,1);
+        check(std::memcmp(result.data(),reference.data(),reference.size()*sizeof(double))==0,
+              "simplified-mask-index one sweep differs bitwise");
+        run(result,191);
+        check(std::memcmp(result.data(),converged.data(),reference.size()*sizeof(double))==0,
+              "simplified-mask-index 192 sweeps differ bitwise");
+        std::cout << "simplified_mask_index_validation,bitwise_one_and_192_passed,"
+                  << data.terminalRow << '\n';
+        if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
+        const auto* ctl=std::getenv("MESH_PMU_CONTROL");
+        const auto* ackPath=std::getenv("MESH_PMU_ACK");
+        if (ctl && ackPath) {
+            PerfControl perf(ctl,ackPath);
+            measure("OptimizedMinimalReload4SimplifiedMaskIndex",1,source,run,
+                    sweeps,repetitions,loadMs,&perf);
+        } else measure("OptimizedMinimalReload4SimplifiedMaskIndex",1,source,run,
+                       sweeps,repetitions,loadMs);
+        return 0;
+    }
+    if (experimental && (std::string(experimental) == "OptimizedMinimalReload4SingleIndexGpr" ||
+                         std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprOverlappingMasks" ||
+                         std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprMemoryZero" ||
+                         std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminal" ||
+                         std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminalMemoryZero")) {
+        const bool isolatedTerminal =
+            std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminal" ||
+            std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminalMemoryZero";
+        const bool memoryZero =
+            std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprMemoryZero" ||
+            std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminalMemoryZero";
+        const bool overlapping = std::string(experimental) ==
+            "OptimizedMinimalReload4SingleIndexGprOverlappingMasks" ||
+            std::string(experimental) == "OptimizedMinimalReload4SingleIndexGprMemoryZero" ||
+            isolatedTerminal;
+        gsExperiment::MinimalOptData data(ldu);
+        const auto validateAndMeasure = [&](auto run, const char* marker) {
+            scalarField result(output.nCells,0.0);
+            run(result,1);
+            check(std::memcmp(result.data(),reference.data(),reference.size()*sizeof(double))==0,
+                  "single-index-GPR one sweep differs bitwise");
+            run(result,191);
+            check(std::memcmp(result.data(),converged.data(),reference.size()*sizeof(double))==0,
+                  "single-index-GPR 192 sweeps differ bitwise");
+            std::cout << marker << ",bitwise_one_and_192_passed,"
+                      << data.terminalRow << '\n';
+            if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
+            const auto* ctl=std::getenv("MESH_PMU_CONTROL");
+            const auto* ackPath=std::getenv("MESH_PMU_ACK");
+            if (ctl && ackPath) {
+                PerfControl perf(ctl,ackPath);
+                measure(experimental,1,source,run,sweeps,repetitions,loadMs,&perf);
+            } else measure(experimental,1,source,run,sweeps,repetitions,loadMs);
+            return 0;
+        };
+        if (isolatedTerminal && memoryZero) {
+            const auto run = [&](scalarField& psi,int count) {
+                gsExperiment::optimizedMinimal4SingleIndexGprIsolatedTerminal<true>(
+                    psi,ldu,source,count,data);
+            };
+            return validateAndMeasure(run,
+                "single_index_gpr_isolated_terminal_memory_zero_validation");
+        }
+        if (isolatedTerminal) {
+            const auto run = [&](scalarField& psi,int count) {
+                gsExperiment::optimizedMinimal4SingleIndexGprIsolatedTerminal<false>(
+                    psi,ldu,source,count,data);
+            };
+            return validateAndMeasure(run,
+                "single_index_gpr_isolated_terminal_validation");
+        }
+        if (memoryZero) {
+            const auto run = [&](scalarField& psi,int count) {
+                gsExperiment::optimizedMinimal4SingleIndexGprMemoryZero(
+                    psi,ldu,source,count,data);
+            };
+            return validateAndMeasure(run,"single_index_gpr_memory_zero_validation");
+        }
+        if (overlapping) {
+            const auto run = [&](scalarField& psi,int count) {
+                gsExperiment::optimizedMinimal4SingleIndexGpr<true>(
+                    psi,ldu,source,count,data);
+            };
+            return validateAndMeasure(run,
+                "single_index_gpr_overlapping_masks_validation");
+        }
+        const auto run = [&](scalarField& psi,int count) {
+            gsExperiment::optimizedMinimal4SingleIndexGpr<false>(
+                psi,ldu,source,count,data);
+        };
+        return validateAndMeasure(run,"single_index_gpr_validation");
+    }
+    if (experimental && std::string(experimental) == "OptimizedMinimalReload4RemainingCount") {
+        gsExperiment::MinimalOptData data(ldu);
+        const auto run = [&](scalarField& psi,int count) {
+            gsExperiment::optimizedMinimal4RemainingCount(psi,ldu,source,count,data);
+        };
+        scalarField result(output.nCells,0.0);
+        run(result,1);
+        check(std::memcmp(result.data(),reference.data(),reference.size()*sizeof(double))==0,
+              "remaining-count one sweep differs bitwise");
+        run(result,191);
+        check(std::memcmp(result.data(),converged.data(),reference.size()*sizeof(double))==0,
+              "remaining-count 192 sweeps differ bitwise");
+        std::cout << "remaining_count_validation,bitwise_one_and_192_passed,"
+                  << data.terminalRow << '\n';
+        if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
+        const auto* ctl=std::getenv("MESH_PMU_CONTROL");
+        const auto* ackPath=std::getenv("MESH_PMU_ACK");
+        if (ctl && ackPath) {
+            PerfControl perf(ctl,ackPath);
+            measure("OptimizedMinimalReload4RemainingCount",1,source,run,
+                    sweeps,repetitions,loadMs,&perf);
+        } else measure("OptimizedMinimalReload4RemainingCount",1,source,run,
+                       sweeps,repetitions,loadMs);
+        return 0;
+    }
+    if (experimental && (std::string(experimental) == "M7" ||
+                         std::string(experimental) == "M7.4d")) {
+        const bool scalarProductM74d=std::string(experimental)=="M7.4d";
+        gsExperiment::MinimalOptData data(ldu);
+        const auto validateAndMeasure = [&](auto run, const char* marker) {
+            scalarField result(output.nCells,0.0);
+            run(result,1);
+            check(std::memcmp(result.data(),reference.data(),reference.size()*sizeof(double))==0,
+                  "M7 family one-sweep result differs bitwise");
+            run(result,191);
+            check(std::memcmp(result.data(),converged.data(),reference.size()*sizeof(double))==0,
+                  "M7 family 192-sweep result differs bitwise");
+            std::cout << marker << ",bitwise_one_and_192_passed,"
+                      << data.terminalRow << '\n';
+            if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
+            const auto* ctl=std::getenv("MESH_PMU_CONTROL");
+            const auto* ackPath=std::getenv("MESH_PMU_ACK");
+            if (ctl && ackPath) {
+                PerfControl perf(ctl,ackPath);
+                measure(experimental,1,source,run,sweeps,repetitions,loadMs,&perf);
+            } else measure(experimental,1,source,run,sweeps,repetitions,loadMs);
+            return 0;
+        };
+        if (scalarProductM74d) {
+            const auto run = [&](scalarField& psi,int count) {
+                gsExperiment::scalarProductMinimal4M74d(psi,ldu,source,count,data);
+            };
+            return validateAndMeasure(run,"m7_4d_validation");
+        }
+        const auto run = [&](scalarField& psi,int count) {
+            gsExperiment::scalarProductMinimal4(psi,ldu,source,count,data);
+        };
+        return validateAndMeasure(run,"m7_validation");
     }
     if (experimental)
     {
