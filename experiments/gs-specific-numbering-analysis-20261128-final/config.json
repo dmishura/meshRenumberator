@@ -1,0 +1,119 @@
+{
+  "created": "2026-11-28",
+  "cases": 29,
+  "sources": {
+    "MotorBike": "../WavefrontGaussSeidel/analysis-results/face-structural/source/MotorBike/polyMesh",
+    "AHBody": "../WavefrontGaussSeidel/analysis-results/face-structural/source/AHBody_original/polyMesh",
+    "Cavity3d": "/home/dmishura/OpenFOAM/OFM-v2026/rundir/Cavity3d_1791730800_mesh/constant/polyMesh",
+    "ConicalDiffuser": "/home/dmishura/OpenFOAM/OFM-v2026/rundir/ConicalDiffuser3M_1791709835_mesh/constant/polyMesh",
+    "MTBHPC": "/home/dmishura/OpenFOAM/OFM-v2026/rundir/MTBHPC_Small_1789294406/constant/polyMesh",
+    "WD_DamBreak": "/home/dmishura/OpenFOAM/OFM-v2026/rundir/WD_DamBreak_1790076487_mesh/constant/polyMesh"
+  },
+  "existing_meshes": {
+    "AHBody": "experiments/locality-20261123T231847/AHBody/existing_renumbered/polyMesh",
+    "Cavity3d": "/home/dmishura/OpenFOAM/OFM-v2026/rundir/Cavity3d_1791731776_mesh/constant/polyMesh",
+    "ConicalDiffuser": "/home/dmishura/OpenFOAM/OFM-v2026/rundir/ConicalDiffuser3M_1791710694_mesh/constant/polyMesh",
+    "MTBHPC": "/home/dmishura/OpenFOAM/OFM-v2026/rundir/MTBHPC_Small_rn_1789333137/constant/polyMesh",
+    "WD_DamBreak": "/home/dmishura/OpenFOAM/OFM-v2026/rundir/WD_DamBreak_1790066877_mesh_renumbered/constant/polyMesh"
+  },
+  "numberings": {
+    "MotorBike": [
+      "original",
+      "rcm",
+      "C",
+      "D"
+    ],
+    "AHBody": [
+      "original",
+      "existing_renumbered",
+      "rcm",
+      "C",
+      "D"
+    ],
+    "Cavity3d": [
+      "original",
+      "existing_renumbered",
+      "rcm",
+      "C",
+      "D"
+    ],
+    "ConicalDiffuser": [
+      "original",
+      "existing_renumbered",
+      "rcm",
+      "C",
+      "D"
+    ],
+    "MTBHPC": [
+      "original",
+      "existing_renumbered",
+      "rcm",
+      "C",
+      "D"
+    ],
+    "WD_DamBreak": [
+      "original",
+      "existing_renumbered",
+      "rcm",
+      "C",
+      "D"
+    ]
+  },
+  "per_case_experiment_root": "/home/dmishura/uGS/meshRenumberator/experiments/m6-mesh-applicability-20261125/experiments",
+  "timing_campaigns": [
+    "experiments/M6.4d/amdr16-two-round-20261126/timing_summary.json",
+    "experiments/avx512-perf-amdR16/other-meshes/timing/timing_summary.json",
+    "experiments/avx512-perf-amdR16/ahmedbody/timing/timing_summary.json",
+    "experiments/avx512-perf-amdR16/timing-corrected/timing_summary.json",
+    "experiments/avx512-perf-amdR16/m8wide/results/initial/timing_summary.json"
+  ],
+  "address_assumptions": {
+    "psi_element_bytes": 8,
+    "cache_line_bytes": 64,
+    "base_alignment_bytes": 64,
+    "page_bytes": [
+      4096,
+      2097152
+    ],
+    "alignment_sensitivity_sample_stride_chunks": 1024
+  },
+  "chunk_windows": [
+    4,
+    8,
+    16,
+    32,
+    64,
+    128
+  ],
+  "window_stride": "max(1,floor(K/4))",
+  "no_benchmark_runs": true,
+  "source_hashes": {
+    "tools/analyze_gs_numberings.py": "d9d7c97f002be969d9b9ec08943811b081f1f3fd4a810a564f306d4d18b1d3df",
+    "tools/summarize_gs_numberings.py": "320714cdc55b82c14154c6959cd8fa8304afcd176de108cbfe6d348d543ad4c4",
+    "tools/working_set_backend.C": "bf211686c1578b4d53d34a0e85eedb0d333cad2baa71c784be2d4fd20d656b3d",
+    "tools/gs_m74d.H": "52443ac9abc21340c394598f4de3b30b0d61c944eb5b28b61fa3649e7b92c768",
+    "tools/gs_minimal_opt.H": "82097ebb8ce3873663b898e27c823b9cfc51c9e63dd3a54938e9529774f6d4ae",
+    "tools/gs_m8wide.H": "79304783dadacef8c2be0e57a9e516c3472ef3adfb36969bd8b98a6db3f6c342",
+    "tools/augment_gs_stream_transitions.py": "9b9c8d2a967ec5122013f8524ef8063813774bb54694048f79bbaad2bdb79d08",
+    "tools/augment_gs_active_page_reuse.py": "731ef83d5b677feab18d19d3f8298b6a129cb61ad69e2dbecb2eabe88a865941",
+    "tools/working_set.py": "939bb38db02cc3b4b12cb6f15491d1623a5e5812e4d6d214adcff0bbad18fda2",
+    "tools/mesh_renumber.py": "219596d839fd644e5da0d25a0f3dd56518518e7d03bed6a25f62203ec38392a0",
+    "experiments/build/working_set_backend": "c90610ded61904c84550aef2c62bfa919a89322c830e8aeb134589d767270d1d"
+  },
+  "topology_checksums": {
+    "MotorBike": "81fecfde472dc8659254959da8a624be289a4fd375ba93a4705f18788f7afbb0",
+    "AHBody": "d4ca2bf658da887e0f2ba0577a6259ebf1d9348ecaf0c5bdff6f5ba636c833e5",
+    "Cavity3d": "876da021c900addf7e33f68c56dff34fc046c66788d636822c9bea1d6dc86e66",
+    "ConicalDiffuser": "1d7ce87b70826908117c6b9431cf51c8e86d178186938c689e0ac0f474ccce80",
+    "MTBHPC": "8a139f0809ebe2c555bf10ac93cec3121a2974a57ce0da42bb6f8e75c526923b",
+    "WD_DamBreak": "09e0b1cc0b18d1e81bbe1150250e7997ad93c290847f53530b334201ec0b814b"
+  },
+  "validation": {
+    "cases_analyzed": 29,
+    "numbering_graph_connectivity_verified": true,
+    "existing_renumbered_archived_topology_validation_checked": true,
+    "no_benchmark_runs": true,
+    "permutation_cases_graph_checked": 18,
+    "existing_renumbered_cases_archived_topology_checked": 5
+  }
+}

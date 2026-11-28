@@ -1,0 +1,14 @@
+campaign,kernel,baseline,cases,median_speedup,min_speedup,max_speedup
+experiments/M6.4d/amdr16-two-round-20261126/timing_summary.json,M6,Scalar,29,0.9609839248464777,0.8896749525411488,1.0591143726817238
+experiments/M6.4d/amdr16-two-round-20261126/timing_summary.json,M6.4d,Scalar,29,1.0038516966818452,0.919415878756051,1.1249454440233004
+experiments/avx512-perf-amdR16/other-meshes/timing/timing_summary.json,AVX512-A,AVX2,22,1.0038589619176626,0.9879859065125672,1.0157146649531823
+experiments/avx512-perf-amdR16/other-meshes/timing/timing_summary.json,AVX512-B,AVX2,22,1.0070968796944837,0.958075809174791,1.032232322634914
+experiments/avx512-perf-amdR16/ahmedbody/timing/timing_summary.json,AVX512-A,AVX2,2,1.007496049807147,1.005139570525848,1.0098525290884461
+experiments/avx512-perf-amdR16/ahmedbody/timing/timing_summary.json,AVX512-B,AVX2,2,0.9927902877486672,0.9902026927713988,0.9953778827259355
+experiments/avx512-perf-amdR16/timing-corrected/timing_summary.json,AVX512-A,AVX2,2,0.9926862641455738,0.9912886966869843,0.9940838316041632
+experiments/avx512-perf-amdR16/timing-corrected/timing_summary.json,AVX512-B,AVX2,2,0.9875301911164789,0.9835687827670182,0.9914915994659397
+experiments/avx512-perf-amdR16/m8wide/results/initial/timing_summary.json,M6.4d-AVX512-A,M6.4d-AVX2,4,0.9676481269851761,0.9205486989106111,1.0105803144265706
+experiments/avx512-perf-amdR16/m8wide/results/initial/timing_summary.json,M6.4d-AVX512-B,M6.4d-AVX2,4,1.011767113828542,0.98444364534766,1.0351013125590833
+experiments/avx512-perf-amdR16/m8wide/results/initial/timing_summary.json,M8.4x128,M6.4d-AVX2,4,0.7802430728052184,0.7304152197042649,0.8371094897329906
+experiments/avx512-perf-amdR16/m8wide/results/initial/timing_summary.json,M8.2x256,M6.4d-AVX2,4,0.8440762519680312,0.8350285020203746,0.8547924759381091
+experiments/avx512-perf-amdR16/m8wide/results/initial/timing_summary.json,M8.1x512,M6.4d-AVX2,4,0.8351605453228484,0.8179474924446707,0.8593555552113211

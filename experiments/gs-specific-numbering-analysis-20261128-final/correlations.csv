@@ -1,0 +1,440 @@
+scope,mesh,metric,timing_norm,n,pearson_r,spearman_rho
+cross_mesh,ALL,W4 chunks,ms_per_face,29,0.3367523100285638,0.3017752946789173
+cross_mesh,ALL,W4 chunks,ms_per_cell,29,0.33437168710363324,0.29191335694431214
+cross_mesh,ALL,W4 utilization,ms_per_face,29,-0.27676675087321545,-0.5567063851184602
+cross_mesh,ALL,W4 utilization,ms_per_cell,29,-0.2899071883927744,-0.5675545166265258
+cross_mesh,ALL,estimated W4 instructions/face,ms_per_face,29,0.28328198356347467,0.5567063851184602
+cross_mesh,ALL,estimated W4 instructions/face,ms_per_cell,29,0.2963367611560713,0.5675545166265258
+cross_mesh,ALL,W4 active unique lines/chunk,ms_per_face,29,0.5907620938217091,0.3307048208450169
+cross_mesh,ALL,W4 active unique lines/chunk,ms_per_cell,29,0.5851686444895765,0.34647613867965255
+cross_mesh,ALL,W4 active 4KiB pages/chunk,ms_per_face,29,0.7189902471722116,0.77525884230881
+cross_mesh,ALL,W4 active 4KiB pages/chunk,ms_per_cell,29,0.7202677511768582,0.7925087211904428
+cross_mesh,ALL,W4 line reuse distance P90,ms_per_face,29,0.555913961712692,0.6107493929301558
+cross_mesh,ALL,W4 line reuse distance P90,ms_per_cell,29,0.5601189394625343,0.6247723392212952
+cross_mesh,ALL,active psi page reuse distance P90,ms_per_face,29,0.7151691500463904,0.8094525867778037
+cross_mesh,ALL,active psi page reuse distance P90,ms_per_cell,29,0.7228104983019319,0.8244014375596099
+cross_mesh,ALL,scatter line reuse distance P90,ms_per_face,29,0.555913961712692,0.6107493929301558
+cross_mesh,ALL,scatter line reuse distance P90,ms_per_cell,29,0.5601189394625343,0.6247723392212952
+cross_mesh,ALL,matrix bandwidth,ms_per_face,29,0.6792024389242189,0.612995075924011
+cross_mesh,ALL,matrix bandwidth,ms_per_cell,29,0.678408028483708,0.6186663899812324
+cross_mesh,ALL,mean row neighbour span,ms_per_face,29,0.6397696030232483,0.7491066132973233
+cross_mesh,ALL,mean row neighbour span,ms_per_cell,29,0.6479870324859694,0.7537916118663321
+cross_mesh,ALL,P99 row neighbour span,ms_per_face,29,0.7633403812545217,0.8022200919693888
+cross_mesh,ALL,P99 row neighbour span,ms_per_cell,29,0.7645384954518196,0.8019734826573786
+within_mesh,AHBody,W4 chunks,ms_per_face,5,0.9766007029888475,0.7
+within_mesh,AHBody,W4 utilization,ms_per_face,5,-0.9753809550874125,-0.7
+within_mesh,AHBody,estimated W4 instructions/face,ms_per_face,5,0.9766007029888479,0.7
+within_mesh,AHBody,W4 active unique lines/chunk,ms_per_face,5,-0.9326875952223511,-0.7
+within_mesh,AHBody,W4 active 4KiB pages/chunk,ms_per_face,5,-0.8588270551124486,-0.3
+within_mesh,AHBody,W4 line reuse distance P90,ms_per_face,5,0.9216014456290541,0.5270462766947298
+within_mesh,AHBody,scatter line reuse distance P90,ms_per_face,5,0.9216014456290541,0.5270462766947298
+within_mesh,AHBody,matrix bandwidth,ms_per_face,5,0.4608145033333104,0.35909242322980395
+within_mesh,AHBody,mean row neighbour span,ms_per_face,5,0.9664649117061958,0.9746794344808963
+within_mesh,AHBody,P99 row neighbour span,ms_per_face,5,0.9408850429500039,0.9746794344808963
+within_mesh,Cavity3d,W4 chunks,ms_per_face,5,-0.23518744513160353,-0.22360679774997896
+within_mesh,Cavity3d,W4 utilization,ms_per_face,5,0.23518686851325207,0.22360679774997896
+within_mesh,Cavity3d,estimated W4 instructions/face,ms_per_face,5,-0.2351874451349303,-0.22360679774997896
+within_mesh,Cavity3d,W4 active unique lines/chunk,ms_per_face,5,0.9996149127315814,0.22360679774997896
+within_mesh,Cavity3d,W4 active 4KiB pages/chunk,ms_per_face,5,0.9997661656322394,0.8944271909999159
+within_mesh,Cavity3d,W4 line reuse distance P90,ms_per_face,5,0.9997567740745984,0.7071067811865475
+within_mesh,Cavity3d,active psi page reuse distance P90,ms_per_face,5,0.9997567740745984,0.7071067811865475
+within_mesh,Cavity3d,scatter line reuse distance P90,ms_per_face,5,0.9997567740745984,0.7071067811865475
+within_mesh,Cavity3d,matrix bandwidth,ms_per_face,5,0.41401453688655326,-0.22360679774997896
+within_mesh,Cavity3d,mean row neighbour span,ms_per_face,5,0.9571162066492119,0.22360679774997896
+within_mesh,Cavity3d,P99 row neighbour span,ms_per_face,5,0.9940622485169555,0.22360679774997896
+within_mesh,ConicalDiffuser,W4 chunks,ms_per_face,5,0.02288686799908767,0.39999999999999997
+within_mesh,ConicalDiffuser,W4 utilization,ms_per_face,5,-0.023100423964154546,-0.39999999999999997
+within_mesh,ConicalDiffuser,estimated W4 instructions/face,ms_per_face,5,0.022886867999005557,0.39999999999999997
+within_mesh,ConicalDiffuser,W4 active unique lines/chunk,ms_per_face,5,0.9994440810098695,0.09999999999999999
+within_mesh,ConicalDiffuser,W4 active 4KiB pages/chunk,ms_per_face,5,0.9996891292436041,0.6
+within_mesh,ConicalDiffuser,W4 line reuse distance P90,ms_per_face,5,0.9994892826686758,0.7071067811865475
+within_mesh,ConicalDiffuser,active psi page reuse distance P90,ms_per_face,5,0.9994892826686758,0.7071067811865475
+within_mesh,ConicalDiffuser,scatter line reuse distance P90,ms_per_face,5,0.9994892826686758,0.7071067811865475
+within_mesh,ConicalDiffuser,matrix bandwidth,ms_per_face,5,0.46986946925275613,0.5642880936468347
+within_mesh,ConicalDiffuser,mean row neighbour span,ms_per_face,5,0.9751145837599989,0.6668859288553503
+within_mesh,ConicalDiffuser,P99 row neighbour span,ms_per_face,5,0.9994892130437373,0.10540925533894598
+within_mesh,MTBHPC,W4 chunks,ms_per_face,5,0.9218300387785292,0.8999999999999998
+within_mesh,MTBHPC,W4 utilization,ms_per_face,5,-0.9143255820741765,-0.8999999999999998
+within_mesh,MTBHPC,estimated W4 instructions/face,ms_per_face,5,0.9218300387785298,0.8999999999999998
+within_mesh,MTBHPC,W4 active unique lines/chunk,ms_per_face,5,-0.9493140778571657,-0.8999999999999998
+within_mesh,MTBHPC,W4 active 4KiB pages/chunk,ms_per_face,5,-0.9616918256137608,-0.8999999999999998
+within_mesh,MTBHPC,W4 line reuse distance P90,ms_per_face,5,0.9936926627242754,0.8944271909999159
+within_mesh,MTBHPC,active psi page reuse distance P90,ms_per_face,5,0.9936884939925684,0.7071067811865475
+within_mesh,MTBHPC,scatter line reuse distance P90,ms_per_face,5,0.9936926627242754,0.8944271909999159
+within_mesh,MTBHPC,matrix bandwidth,ms_per_face,5,0.69966617560846,0.6668859288553503
+within_mesh,MTBHPC,mean row neighbour span,ms_per_face,5,0.9838376540188304,0.05129891760425771
+within_mesh,MTBHPC,P99 row neighbour span,ms_per_face,5,0.9900101780661414,0.05129891760425771
+within_mesh,MotorBike,W4 chunks,ms_per_face,4,0.9836488132916696,1.0
+within_mesh,MotorBike,W4 utilization,ms_per_face,4,-0.9860082724145968,-1.0
+within_mesh,MotorBike,estimated W4 instructions/face,ms_per_face,4,0.9836488132916696,1.0
+within_mesh,MotorBike,W4 active unique lines/chunk,ms_per_face,4,-0.9710979636574065,-1.0
+within_mesh,MotorBike,W4 active 4KiB pages/chunk,ms_per_face,4,-0.9359211288243182,-1.0
+within_mesh,MotorBike,W4 line reuse distance P90,ms_per_face,4,0.8744883885490154,0.7999999999999999
+within_mesh,MotorBike,active psi page reuse distance P90,ms_per_face,4,0.8744705155582684,0.7745966692414834
+within_mesh,MotorBike,scatter line reuse distance P90,ms_per_face,4,0.8744883885490154,0.7999999999999999
+within_mesh,MotorBike,matrix bandwidth,ms_per_face,4,0.8694255022100323,0.316227766016838
+within_mesh,MotorBike,mean row neighbour span,ms_per_face,4,0.8513235255353887,0.316227766016838
+within_mesh,MotorBike,P99 row neighbour span,ms_per_face,4,0.8631202391522869,0.316227766016838
+within_mesh,WD_DamBreak,W4 chunks,ms_per_face,5,0.5413597446185573,0.11180339887498948
+within_mesh,WD_DamBreak,W4 utilization,ms_per_face,5,-0.5413610030187884,-0.11180339887498948
+within_mesh,WD_DamBreak,estimated W4 instructions/face,ms_per_face,5,0.54135974462379,0.11180339887498948
+within_mesh,WD_DamBreak,W4 active unique lines/chunk,ms_per_face,5,0.9994870019930613,0.09999999999999999
+within_mesh,WD_DamBreak,W4 active 4KiB pages/chunk,ms_per_face,5,0.999357402134297,0.7999999999999999
+within_mesh,WD_DamBreak,W4 line reuse distance P90,ms_per_face,5,0.9995997389744921,0.7071067811865475
+within_mesh,WD_DamBreak,active psi page reuse distance P90,ms_per_face,5,0.9995997389744921,0.7071067811865475
+within_mesh,WD_DamBreak,scatter line reuse distance P90,ms_per_face,5,0.9995997389744921,0.7071067811865475
+within_mesh,WD_DamBreak,matrix bandwidth,ms_per_face,5,0.9360950972905392,0.15389675281277312
+within_mesh,WD_DamBreak,mean row neighbour span,ms_per_face,5,0.9992346158514922,0.15389675281277312
+within_mesh,WD_DamBreak,P99 row neighbour span,ms_per_face,5,0.9989314344216896,0.35909242322980395
+matched_campaign,M6.4d matched,W4 chunks,ms_per_face:M6.4d,29,0.3367523100285638,0.3017752946789173
+matched_campaign,M6.4d matched,W4 chunks,ms_per_cell:M6.4d,29,0.33437168710363324,0.29191335694431214
+matched_campaign,M6.4d matched,W4 utilization,ms_per_face:M6.4d,29,-0.27676675087321545,-0.5567063851184602
+matched_campaign,M6.4d matched,W4 utilization,ms_per_cell:M6.4d,29,-0.2899071883927744,-0.5675545166265258
+matched_campaign,M6.4d matched,estimated W4 instructions/face,ms_per_face:M6.4d,29,0.28328198356347467,0.5567063851184602
+matched_campaign,M6.4d matched,estimated W4 instructions/face,ms_per_cell:M6.4d,29,0.2963367611560713,0.5675545166265258
+matched_campaign,M6.4d matched,W4 active unique lines/chunk,ms_per_face:M6.4d,29,0.5907620938217091,0.3307048208450169
+matched_campaign,M6.4d matched,W4 active unique lines/chunk,ms_per_cell:M6.4d,29,0.5851686444895765,0.34647613867965255
+matched_campaign,M6.4d matched,W4 active 4KiB pages/chunk,ms_per_face:M6.4d,29,0.7189902471722116,0.77525884230881
+matched_campaign,M6.4d matched,W4 active 4KiB pages/chunk,ms_per_cell:M6.4d,29,0.7202677511768582,0.7925087211904428
+matched_campaign,M6.4d matched,W4 line reuse distance P90,ms_per_face:M6.4d,29,0.555913961712692,0.6107493929301558
+matched_campaign,M6.4d matched,W4 line reuse distance P90,ms_per_cell:M6.4d,29,0.5601189394625343,0.6247723392212952
+matched_campaign,M6.4d matched,active psi page reuse distance P90,ms_per_face:M6.4d,29,0.7151691500463904,0.8094525867778037
+matched_campaign,M6.4d matched,active psi page reuse distance P90,ms_per_cell:M6.4d,29,0.7228104983019319,0.8244014375596099
+matched_campaign,M6.4d matched,scatter line reuse distance P90,ms_per_face:M6.4d,29,0.555913961712692,0.6107493929301558
+matched_campaign,M6.4d matched,scatter line reuse distance P90,ms_per_cell:M6.4d,29,0.5601189394625343,0.6247723392212952
+matched_campaign,M6.4d matched,matrix bandwidth,ms_per_face:M6.4d,29,0.6792024389242189,0.612995075924011
+matched_campaign,M6.4d matched,matrix bandwidth,ms_per_cell:M6.4d,29,0.678408028483708,0.6186663899812324
+matched_campaign,M6.4d matched,mean row neighbour span,ms_per_face:M6.4d,29,0.6397696030232483,0.7491066132973233
+matched_campaign,M6.4d matched,mean row neighbour span,ms_per_cell:M6.4d,29,0.6479870324859694,0.7537916118663321
+matched_campaign,M6.4d matched,P99 row neighbour span,ms_per_face:M6.4d,29,0.7633403812545217,0.8022200919693888
+matched_campaign,M6.4d matched,P99 row neighbour span,ms_per_cell:M6.4d,29,0.7645384954518196,0.8019734826573786
+within_mesh_matched_campaign,AHBody,W4 chunks,ms_per_face:M6.4d matched:M6.4d,5,0.9766007029888475,0.7
+within_mesh_matched_campaign,AHBody,W4 utilization,ms_per_face:M6.4d matched:M6.4d,5,-0.9753809550874125,-0.7
+within_mesh_matched_campaign,AHBody,estimated W4 instructions/face,ms_per_face:M6.4d matched:M6.4d,5,0.9766007029888479,0.7
+within_mesh_matched_campaign,AHBody,W4 active unique lines/chunk,ms_per_face:M6.4d matched:M6.4d,5,-0.9326875952223511,-0.7
+within_mesh_matched_campaign,AHBody,W4 active 4KiB pages/chunk,ms_per_face:M6.4d matched:M6.4d,5,-0.8588270551124486,-0.3
+within_mesh_matched_campaign,AHBody,W4 line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9216014456290541,0.5270462766947298
+within_mesh_matched_campaign,AHBody,active psi page reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,nan,nan
+within_mesh_matched_campaign,AHBody,scatter line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9216014456290541,0.5270462766947298
+within_mesh_matched_campaign,AHBody,matrix bandwidth,ms_per_face:M6.4d matched:M6.4d,5,0.4608145033333104,0.35909242322980395
+within_mesh_matched_campaign,AHBody,mean row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9664649117061958,0.9746794344808963
+within_mesh_matched_campaign,AHBody,P99 row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9408850429500039,0.9746794344808963
+within_mesh_matched_campaign,Cavity3d,W4 chunks,ms_per_face:M6.4d matched:M6.4d,5,-0.23518744513160353,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 utilization,ms_per_face:M6.4d matched:M6.4d,5,0.23518686851325207,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,estimated W4 instructions/face,ms_per_face:M6.4d matched:M6.4d,5,-0.2351874451349303,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 active unique lines/chunk,ms_per_face:M6.4d matched:M6.4d,5,0.9996149127315814,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 active 4KiB pages/chunk,ms_per_face:M6.4d matched:M6.4d,5,0.9997661656322394,0.8944271909999159
+within_mesh_matched_campaign,Cavity3d,W4 line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9997567740745984,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,active psi page reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9997567740745984,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,scatter line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9997567740745984,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,matrix bandwidth,ms_per_face:M6.4d matched:M6.4d,5,0.41401453688655326,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,mean row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9571162066492119,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,P99 row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9940622485169555,0.22360679774997896
+within_mesh_matched_campaign,ConicalDiffuser,W4 chunks,ms_per_face:M6.4d matched:M6.4d,5,0.02288686799908767,0.39999999999999997
+within_mesh_matched_campaign,ConicalDiffuser,W4 utilization,ms_per_face:M6.4d matched:M6.4d,5,-0.023100423964154546,-0.39999999999999997
+within_mesh_matched_campaign,ConicalDiffuser,estimated W4 instructions/face,ms_per_face:M6.4d matched:M6.4d,5,0.022886867999005557,0.39999999999999997
+within_mesh_matched_campaign,ConicalDiffuser,W4 active unique lines/chunk,ms_per_face:M6.4d matched:M6.4d,5,0.9994440810098695,0.09999999999999999
+within_mesh_matched_campaign,ConicalDiffuser,W4 active 4KiB pages/chunk,ms_per_face:M6.4d matched:M6.4d,5,0.9996891292436041,0.6
+within_mesh_matched_campaign,ConicalDiffuser,W4 line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9994892826686758,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,active psi page reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9994892826686758,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,scatter line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9994892826686758,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,matrix bandwidth,ms_per_face:M6.4d matched:M6.4d,5,0.46986946925275613,0.5642880936468347
+within_mesh_matched_campaign,ConicalDiffuser,mean row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9751145837599989,0.6668859288553503
+within_mesh_matched_campaign,ConicalDiffuser,P99 row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9994892130437373,0.10540925533894598
+within_mesh_matched_campaign,MTBHPC,W4 chunks,ms_per_face:M6.4d matched:M6.4d,5,0.9218300387785292,0.8999999999999998
+within_mesh_matched_campaign,MTBHPC,W4 utilization,ms_per_face:M6.4d matched:M6.4d,5,-0.9143255820741765,-0.8999999999999998
+within_mesh_matched_campaign,MTBHPC,estimated W4 instructions/face,ms_per_face:M6.4d matched:M6.4d,5,0.9218300387785298,0.8999999999999998
+within_mesh_matched_campaign,MTBHPC,W4 active unique lines/chunk,ms_per_face:M6.4d matched:M6.4d,5,-0.9493140778571657,-0.8999999999999998
+within_mesh_matched_campaign,MTBHPC,W4 active 4KiB pages/chunk,ms_per_face:M6.4d matched:M6.4d,5,-0.9616918256137608,-0.8999999999999998
+within_mesh_matched_campaign,MTBHPC,W4 line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9936926627242754,0.8944271909999159
+within_mesh_matched_campaign,MTBHPC,active psi page reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9936884939925684,0.7071067811865475
+within_mesh_matched_campaign,MTBHPC,scatter line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9936926627242754,0.8944271909999159
+within_mesh_matched_campaign,MTBHPC,matrix bandwidth,ms_per_face:M6.4d matched:M6.4d,5,0.69966617560846,0.6668859288553503
+within_mesh_matched_campaign,MTBHPC,mean row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9838376540188304,0.05129891760425771
+within_mesh_matched_campaign,MTBHPC,P99 row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9900101780661414,0.05129891760425771
+within_mesh_matched_campaign,MotorBike,W4 chunks,ms_per_face:M6.4d matched:M6.4d,4,0.9836488132916696,1.0
+within_mesh_matched_campaign,MotorBike,W4 utilization,ms_per_face:M6.4d matched:M6.4d,4,-0.9860082724145968,-1.0
+within_mesh_matched_campaign,MotorBike,estimated W4 instructions/face,ms_per_face:M6.4d matched:M6.4d,4,0.9836488132916696,1.0
+within_mesh_matched_campaign,MotorBike,W4 active unique lines/chunk,ms_per_face:M6.4d matched:M6.4d,4,-0.9710979636574065,-1.0
+within_mesh_matched_campaign,MotorBike,W4 active 4KiB pages/chunk,ms_per_face:M6.4d matched:M6.4d,4,-0.9359211288243182,-1.0
+within_mesh_matched_campaign,MotorBike,W4 line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,4,0.8744883885490154,0.7999999999999999
+within_mesh_matched_campaign,MotorBike,active psi page reuse distance P90,ms_per_face:M6.4d matched:M6.4d,4,0.8744705155582684,0.7745966692414834
+within_mesh_matched_campaign,MotorBike,scatter line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,4,0.8744883885490154,0.7999999999999999
+within_mesh_matched_campaign,MotorBike,matrix bandwidth,ms_per_face:M6.4d matched:M6.4d,4,0.8694255022100323,0.316227766016838
+within_mesh_matched_campaign,MotorBike,mean row neighbour span,ms_per_face:M6.4d matched:M6.4d,4,0.8513235255353887,0.316227766016838
+within_mesh_matched_campaign,MotorBike,P99 row neighbour span,ms_per_face:M6.4d matched:M6.4d,4,0.8631202391522869,0.316227766016838
+within_mesh_matched_campaign,WD_DamBreak,W4 chunks,ms_per_face:M6.4d matched:M6.4d,5,0.5413597446185573,0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,W4 utilization,ms_per_face:M6.4d matched:M6.4d,5,-0.5413610030187884,-0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,estimated W4 instructions/face,ms_per_face:M6.4d matched:M6.4d,5,0.54135974462379,0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,W4 active unique lines/chunk,ms_per_face:M6.4d matched:M6.4d,5,0.9994870019930613,0.09999999999999999
+within_mesh_matched_campaign,WD_DamBreak,W4 active 4KiB pages/chunk,ms_per_face:M6.4d matched:M6.4d,5,0.999357402134297,0.7999999999999999
+within_mesh_matched_campaign,WD_DamBreak,W4 line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9995997389744921,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,active psi page reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9995997389744921,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,scatter line reuse distance P90,ms_per_face:M6.4d matched:M6.4d,5,0.9995997389744921,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,matrix bandwidth,ms_per_face:M6.4d matched:M6.4d,5,0.9360950972905392,0.15389675281277312
+within_mesh_matched_campaign,WD_DamBreak,mean row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9992346158514922,0.15389675281277312
+within_mesh_matched_campaign,WD_DamBreak,P99 row neighbour span,ms_per_face:M6.4d matched:M6.4d,5,0.9989314344216896,0.35909242322980395
+matched_campaign,AVX512 other meshes,W4 chunks,ms_per_face:AVX2,22,0.3284318687870993,0.4238833724460881
+matched_campaign,AVX512 other meshes,W4 chunks,ms_per_cell:AVX2,22,0.32990706145013204,0.4238833724460881
+matched_campaign,AVX512 other meshes,W4 utilization,ms_per_face:AVX2,22,-0.4149466126931402,-0.6038498777035728
+matched_campaign,AVX512 other meshes,W4 utilization,ms_per_cell:AVX2,22,-0.42387145194316844,-0.6038498777035728
+matched_campaign,AVX512 other meshes,estimated W4 instructions/face,ms_per_face:AVX2,22,0.41879000494721697,0.6038498777035728
+matched_campaign,AVX512 other meshes,estimated W4 instructions/face,ms_per_cell:AVX2,22,0.4275874099781883,0.6038498777035728
+matched_campaign,AVX512 other meshes,W4 active unique lines/chunk,ms_per_face:AVX2,22,0.6424028495086753,0.31712852376483575
+matched_campaign,AVX512 other meshes,W4 active unique lines/chunk,ms_per_cell:AVX2,22,0.636316023033633,0.31712852376483575
+matched_campaign,AVX512 other meshes,W4 active 4KiB pages/chunk,ms_per_face:AVX2,22,0.8273213312008495,0.9276433288736106
+matched_campaign,AVX512 other meshes,W4 active 4KiB pages/chunk,ms_per_cell:AVX2,22,0.8257027823646168,0.9276433288736106
+matched_campaign,AVX512 other meshes,W4 line reuse distance P90,ms_per_face:AVX2,22,0.5519238345115912,0.5572487001498005
+matched_campaign,AVX512 other meshes,W4 line reuse distance P90,ms_per_cell:AVX2,22,0.5568489796933876,0.5572487001498005
+matched_campaign,AVX512 other meshes,active psi page reuse distance P90,ms_per_face:AVX2,22,0.7878492751095322,0.8494303323872756
+matched_campaign,AVX512 other meshes,active psi page reuse distance P90,ms_per_cell:AVX2,22,0.7928718143435348,0.8494303323872756
+matched_campaign,AVX512 other meshes,scatter line reuse distance P90,ms_per_face:AVX2,22,0.5519238345115912,0.5572487001498005
+matched_campaign,AVX512 other meshes,scatter line reuse distance P90,ms_per_cell:AVX2,22,0.5568489796933876,0.5572487001498005
+matched_campaign,AVX512 other meshes,matrix bandwidth,ms_per_face:AVX2,22,0.6711137681540059,0.6585585754658639
+matched_campaign,AVX512 other meshes,matrix bandwidth,ms_per_cell:AVX2,22,0.6708005853615958,0.6585585754658639
+matched_campaign,AVX512 other meshes,mean row neighbour span,ms_per_face:AVX2,22,0.6366774184208391,0.7954753927018942
+matched_campaign,AVX512 other meshes,mean row neighbour span,ms_per_cell:AVX2,22,0.6437293004928694,0.7954753927018942
+matched_campaign,AVX512 other meshes,P99 row neighbour span,ms_per_face:AVX2,22,0.7547079660416429,0.8160745301298518
+matched_campaign,AVX512 other meshes,P99 row neighbour span,ms_per_cell:AVX2,22,0.7554667351525753,0.8160745301298518
+within_mesh_matched_campaign,Cavity3d,W4 chunks,ms_per_face:AVX512 other meshes:AVX2,5,-0.2562164712656804,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 utilization,ms_per_face:AVX512 other meshes:AVX2,5,0.25621589778362586,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX2,5,-0.2562164712689891,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX2,5,0.9988581574873724,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX2,5,0.9999946734693761,0.8944271909999159
+within_mesh_matched_campaign,Cavity3d,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9991339288003179,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9991339288003179,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9991339288003179,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX2,5,0.39419834305555446,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX2,5,0.9506540572540384,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX2,5,0.9915210624100284,0.22360679774997896
+within_mesh_matched_campaign,ConicalDiffuser,W4 chunks,ms_per_face:AVX512 other meshes:AVX2,5,0.02548160964621595,0.7
+within_mesh_matched_campaign,ConicalDiffuser,W4 utilization,ms_per_face:AVX512 other meshes:AVX2,5,-0.02569535419670072,-0.7
+within_mesh_matched_campaign,ConicalDiffuser,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX2,5,0.025481609646133482,0.7
+within_mesh_matched_campaign,ConicalDiffuser,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX2,5,0.9993645759790846,0.0
+within_mesh_matched_campaign,ConicalDiffuser,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX2,5,0.9996773727441853,0.7
+within_mesh_matched_campaign,ConicalDiffuser,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9994187470620586,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9994187470620585,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9994187470620586,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX2,5,0.47281875184165223,0.7181848464596079
+within_mesh_matched_campaign,ConicalDiffuser,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX2,5,0.9758569786777357,0.8207826816681234
+within_mesh_matched_campaign,ConicalDiffuser,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX2,5,0.9994186812996927,0.31622776601683794
+within_mesh_matched_campaign,MTBHPC,W4 chunks,ms_per_face:AVX512 other meshes:AVX2,5,0.924579445726457,0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 utilization,ms_per_face:AVX512 other meshes:AVX2,5,-0.9171918062226759,-0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX2,5,0.9245794457264576,0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX2,5,-0.9514952294980451,-0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX2,5,-0.9636808850313227,-0.7999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.993114626844666,0.6708203932499368
+within_mesh_matched_campaign,MTBHPC,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9931103562397358,0.7071067811865475
+within_mesh_matched_campaign,MTBHPC,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.993114626844666,0.6708203932499368
+within_mesh_matched_campaign,MTBHPC,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX2,5,0.6922400481916111,0.8207826816681234
+within_mesh_matched_campaign,MTBHPC,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX2,5,0.9837961145230397,0.20519567041703085
+within_mesh_matched_campaign,MTBHPC,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX2,5,0.9896618251577196,0.20519567041703085
+within_mesh_matched_campaign,WD_DamBreak,W4 chunks,ms_per_face:AVX512 other meshes:AVX2,5,0.5281103878997188,0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,W4 utilization,ms_per_face:AVX512 other meshes:AVX2,5,-0.5281116587984024,-0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX2,5,0.5281103879050032,0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX2,5,0.9992379162966081,0.09999999999999999
+within_mesh_matched_campaign,WD_DamBreak,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX2,5,0.9997457087267201,0.7999999999999999
+within_mesh_matched_campaign,WD_DamBreak,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9993946915790319,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9993946915790319,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX2,5,0.9993946915790319,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX2,5,0.9304536258090184,0.15389675281277312
+within_mesh_matched_campaign,WD_DamBreak,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX2,5,0.9986834564323691,0.15389675281277312
+within_mesh_matched_campaign,WD_DamBreak,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX2,5,0.999180898579798,0.35909242322980395
+matched_campaign,AVX512 other meshes,W4 chunks,ms_per_face:AVX512-A,22,0.3271374945307285,0.4238833724460881
+matched_campaign,AVX512 other meshes,W4 chunks,ms_per_cell:AVX512-A,22,0.3286014526301515,0.4238833724460881
+matched_campaign,AVX512 other meshes,W4 utilization,ms_per_face:AVX512-A,22,-0.42728647513717655,-0.6038498777035728
+matched_campaign,AVX512 other meshes,W4 utilization,ms_per_cell:AVX512-A,22,-0.4360633253568046,-0.6038498777035728
+matched_campaign,AVX512 other meshes,estimated W4 instructions/face,ms_per_face:AVX512-A,22,0.4308382920958105,0.6038498777035728
+matched_campaign,AVX512 other meshes,estimated W4 instructions/face,ms_per_cell:AVX512-A,22,0.4394881560586095,0.6038498777035728
+matched_campaign,AVX512 other meshes,W4 active unique lines/chunk,ms_per_face:AVX512-A,22,0.6409574102033337,0.3159979407924121
+matched_campaign,AVX512 other meshes,W4 active unique lines/chunk,ms_per_cell:AVX512-A,22,0.6348357651973413,0.3159979407924121
+matched_campaign,AVX512 other meshes,W4 active 4KiB pages/chunk,ms_per_face:AVX512-A,22,0.8328235388709295,0.9287739118460343
+matched_campaign,AVX512 other meshes,W4 active 4KiB pages/chunk,ms_per_cell:AVX512-A,22,0.831097324062948,0.9287739118460343
+matched_campaign,AVX512 other meshes,W4 line reuse distance P90,ms_per_face:AVX512-A,22,0.5502293192308846,0.5572487001498005
+matched_campaign,AVX512 other meshes,W4 line reuse distance P90,ms_per_cell:AVX512-A,22,0.5550501458351634,0.5572487001498005
+matched_campaign,AVX512 other meshes,active psi page reuse distance P90,ms_per_face:AVX512-A,22,0.7944597926464051,0.8494303323872756
+matched_campaign,AVX512 other meshes,active psi page reuse distance P90,ms_per_cell:AVX512-A,22,0.7993256392312115,0.8494303323872756
+matched_campaign,AVX512 other meshes,scatter line reuse distance P90,ms_per_face:AVX512-A,22,0.5502293192308846,0.5572487001498005
+matched_campaign,AVX512 other meshes,scatter line reuse distance P90,ms_per_cell:AVX512-A,22,0.5550501458351634,0.5572487001498005
+matched_campaign,AVX512 other meshes,matrix bandwidth,ms_per_face:AVX512-A,22,0.6691903875959919,0.6585585754658639
+matched_campaign,AVX512 other meshes,matrix bandwidth,ms_per_cell:AVX512-A,22,0.668797548704722,0.6585585754658639
+matched_campaign,AVX512 other meshes,mean row neighbour span,ms_per_face:AVX512-A,22,0.6366789718158732,0.7954753927018942
+matched_campaign,AVX512 other meshes,mean row neighbour span,ms_per_cell:AVX512-A,22,0.6436133674029353,0.7954753927018942
+matched_campaign,AVX512 other meshes,P99 row neighbour span,ms_per_face:AVX512-A,22,0.7523419022356512,0.8160745301298518
+matched_campaign,AVX512 other meshes,P99 row neighbour span,ms_per_cell:AVX512-A,22,0.7530033180785606,0.8160745301298518
+within_mesh_matched_campaign,Cavity3d,W4 chunks,ms_per_face:AVX512 other meshes:AVX512-A,5,-0.2515583881086547,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 utilization,ms_per_face:AVX512 other meshes:AVX512-A,5,0.2515578139011597,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX512-A,5,-0.2515583881119677,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9990764239332622,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9999941509988864,0.8944271909999159
+within_mesh_matched_campaign,Cavity3d,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9993224651020465,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9993224651020465,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9993224651020465,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX512-A,5,0.39861970548981385,-0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9521371807380676,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9921353169320135,0.22360679774997896
+within_mesh_matched_campaign,ConicalDiffuser,W4 chunks,ms_per_face:AVX512 other meshes:AVX512-A,5,0.02666606140282747,0.7
+within_mesh_matched_campaign,ConicalDiffuser,W4 utilization,ms_per_face:AVX512 other meshes:AVX512-A,5,-0.026878909935006252,-0.7
+within_mesh_matched_campaign,ConicalDiffuser,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX512-A,5,0.026666061402745144,0.7
+within_mesh_matched_campaign,ConicalDiffuser,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9995343526631693,0.0
+within_mesh_matched_campaign,ConicalDiffuser,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9997063549223998,0.7
+within_mesh_matched_campaign,ConicalDiffuser,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9995779766728664,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9995779766728664,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9995779766728664,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX512-A,5,0.46565486919046484,0.7181848464596079
+within_mesh_matched_campaign,ConicalDiffuser,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX512-A,5,0.974049465307641,0.8207826816681234
+within_mesh_matched_campaign,ConicalDiffuser,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9995779214982059,0.31622776601683794
+within_mesh_matched_campaign,MTBHPC,W4 chunks,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9233711274587032,0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 utilization,ms_per_face:AVX512 other meshes:AVX512-A,5,-0.9159296428064532,-0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9233711274587038,0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX512-A,5,-0.9505450487777057,-0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX512-A,5,-0.9627532277865725,-0.7999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9934483082975313,0.6708203932499368
+within_mesh_matched_campaign,MTBHPC,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9934444427880386,0.7071067811865475
+within_mesh_matched_campaign,MTBHPC,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9934483082975313,0.6708203932499368
+within_mesh_matched_campaign,MTBHPC,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX512-A,5,0.6905584331798652,0.8207826816681234
+within_mesh_matched_campaign,MTBHPC,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9844625520900494,0.20519567041703085
+within_mesh_matched_campaign,MTBHPC,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9901501104312977,0.20519567041703085
+within_mesh_matched_campaign,WD_DamBreak,W4 chunks,ms_per_face:AVX512 other meshes:AVX512-A,5,0.5299412626025622,0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,W4 utilization,ms_per_face:AVX512 other meshes:AVX512-A,5,-0.5299425318465489,-0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX512-A,5,0.5299412626078399,0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9993159168123416,0.0
+within_mesh_matched_campaign,WD_DamBreak,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9996925878458013,0.8999999999999998
+within_mesh_matched_campaign,WD_DamBreak,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9994635997391446,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9994635997391446,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9994635997391446,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9312620922451875,0.15389675281277312
+within_mesh_matched_campaign,WD_DamBreak,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9988015058213255,0.15389675281277312
+within_mesh_matched_campaign,WD_DamBreak,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX512-A,5,0.9991960898736204,0.35909242322980395
+matched_campaign,AVX512 other meshes,W4 chunks,ms_per_face:AVX512-B,22,0.3372825064628519,0.4170921835684472
+matched_campaign,AVX512 other meshes,W4 chunks,ms_per_cell:AVX512-B,22,0.33863379298755625,0.4091691298778661
+matched_campaign,AVX512 other meshes,W4 utilization,ms_per_face:AVX512-B,22,-0.4297466909254372,-0.6038498777035728
+matched_campaign,AVX512 other meshes,W4 utilization,ms_per_cell:AVX512-B,22,-0.4382820385057814,-0.598190553638872
+matched_campaign,AVX512 other meshes,estimated W4 instructions/face,ms_per_face:AVX512-B,22,0.4330687407422903,0.6038498777035728
+matched_campaign,AVX512 other meshes,estimated W4 instructions/face,ms_per_cell:AVX512-B,22,0.44148187240334674,0.598190553638872
+matched_campaign,AVX512 other meshes,W4 active unique lines/chunk,ms_per_face:AVX512-B,22,0.6333570693963951,0.3453930980754272
+matched_campaign,AVX512 other meshes,W4 active unique lines/chunk,ms_per_cell:AVX512-B,22,0.6272682682091127,0.3487848469926982
+matched_campaign,AVX512 other meshes,W4 active 4KiB pages/chunk,ms_per_face:AVX512-B,22,0.8277321193206383,0.9118151672596794
+matched_campaign,AVX512 other meshes,W4 active 4KiB pages/chunk,ms_per_cell:AVX512-B,22,0.8259150517931444,0.9140763332045267
+matched_campaign,AVX512 other meshes,W4 line reuse distance P90,ms_per_face:AVX512-B,22,0.5537521758423393,0.5572487001498005
+matched_campaign,AVX512 other meshes,W4 line reuse distance P90,ms_per_cell:AVX512-B,22,0.5584396849800685,0.5572487001498005
+matched_campaign,AVX512 other meshes,active psi page reuse distance P90,ms_per_face:AVX512-B,22,0.7933875927486869,0.8494303323872756
+matched_campaign,AVX512 other meshes,active psi page reuse distance P90,ms_per_cell:AVX512-B,22,0.7980627079596319,0.8494303323872756
+matched_campaign,AVX512 other meshes,scatter line reuse distance P90,ms_per_face:AVX512-B,22,0.5537521758423393,0.5572487001498005
+matched_campaign,AVX512 other meshes,scatter line reuse distance P90,ms_per_cell:AVX512-B,22,0.5584396849800685,0.5572487001498005
+matched_campaign,AVX512 other meshes,matrix bandwidth,ms_per_face:AVX512-B,22,0.6797761792969778,0.7355035636646247
+matched_campaign,AVX512 other meshes,matrix bandwidth,ms_per_cell:AVX512-B,22,0.6792475590639692,0.7405955114130721
+matched_campaign,AVX512 other meshes,mean row neighbour span,ms_per_face:AVX512-B,22,0.6446387387881014,0.8237639913043796
+matched_campaign,AVX512 other meshes,mean row neighbour span,ms_per_cell:AVX512-B,22,0.6513517463989326,0.8299874829969264
+matched_campaign,AVX512 other meshes,P99 row neighbour span,ms_per_face:AVX512-B,22,0.7535411910326686,0.883420486499791
+matched_campaign,AVX512 other meshes,P99 row neighbour span,ms_per_cell:AVX512-B,22,0.7541077861728862,0.8885138781580217
+within_mesh_matched_campaign,Cavity3d,W4 chunks,ms_per_face:AVX512 other meshes:AVX512-B,5,-0.19879521760726052,0.7826237921249264
+within_mesh_matched_campaign,Cavity3d,W4 utilization,ms_per_face:AVX512 other meshes:AVX512-B,5,0.19879463616381482,-0.7826237921249264
+within_mesh_matched_campaign,Cavity3d,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX512-B,5,-0.1987952176106151,0.7826237921249264
+within_mesh_matched_campaign,Cavity3d,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9999316208277548,0.8944271909999159
+within_mesh_matched_campaign,Cavity3d,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9983885101451109,0.22360679774997896
+within_mesh_matched_campaign,Cavity3d,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9998430768110259,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9998430768110259,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9998430768110259,0.7071067811865475
+within_mesh_matched_campaign,Cavity3d,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX512-B,5,0.4476817978725208,0.7826237921249264
+within_mesh_matched_campaign,Cavity3d,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9672855162254018,0.8944271909999159
+within_mesh_matched_campaign,Cavity3d,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9974528537365305,0.8944271909999159
+within_mesh_matched_campaign,ConicalDiffuser,W4 chunks,ms_per_face:AVX512 other meshes:AVX512-B,5,0.022227013806598184,0.39999999999999997
+within_mesh_matched_campaign,ConicalDiffuser,W4 utilization,ms_per_face:AVX512 other meshes:AVX512-B,5,-0.02244045635085791,-0.39999999999999997
+within_mesh_matched_campaign,ConicalDiffuser,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX512-B,5,0.022227013806516177,0.39999999999999997
+within_mesh_matched_campaign,ConicalDiffuser,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX512-B,5,0.999471467350923,0.09999999999999999
+within_mesh_matched_campaign,ConicalDiffuser,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9996873703698307,0.6
+within_mesh_matched_campaign,ConicalDiffuser,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9995133762429892,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.999513376242989,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9995133762429892,0.7071067811865475
+within_mesh_matched_campaign,ConicalDiffuser,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX512-B,5,0.46852826620674104,0.5642880936468347
+within_mesh_matched_campaign,ConicalDiffuser,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9747706016216088,0.6668859288553503
+within_mesh_matched_campaign,ConicalDiffuser,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9995133061671816,0.10540925533894598
+within_mesh_matched_campaign,MTBHPC,W4 chunks,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9268911667097038,0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 utilization,ms_per_face:AVX512 other meshes:AVX512-B,5,-0.9196113796771015,-0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9268911667097043,0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX512-B,5,-0.9533769548720049,-0.9999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX512-B,5,-0.9652253677991766,-0.7999999999999999
+within_mesh_matched_campaign,MTBHPC,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9923576548241663,0.6708203932499368
+within_mesh_matched_campaign,MTBHPC,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9923534042789789,0.7071067811865475
+within_mesh_matched_campaign,MTBHPC,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9923576548241663,0.6708203932499368
+within_mesh_matched_campaign,MTBHPC,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX512-B,5,0.6935715554854522,0.8207826816681234
+within_mesh_matched_campaign,MTBHPC,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9829009076667123,0.20519567041703085
+within_mesh_matched_campaign,MTBHPC,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9888448852922987,0.20519567041703085
+within_mesh_matched_campaign,WD_DamBreak,W4 chunks,ms_per_face:AVX512 other meshes:AVX512-B,5,0.524653108886764,0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,W4 utilization,ms_per_face:AVX512 other meshes:AVX512-B,5,-0.5246543826848572,-0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,estimated W4 instructions/face,ms_per_face:AVX512 other meshes:AVX512-B,5,0.5246531088920606,0.11180339887498948
+within_mesh_matched_campaign,WD_DamBreak,W4 active unique lines/chunk,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9989529982820999,0.0
+within_mesh_matched_campaign,WD_DamBreak,W4 active 4KiB pages/chunk,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9998724888714589,0.8999999999999998
+within_mesh_matched_campaign,WD_DamBreak,W4 line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9991383963960478,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,active psi page reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9991383963960478,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,scatter line reuse distance P90,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9991383963960478,0.7071067811865475
+within_mesh_matched_campaign,WD_DamBreak,matrix bandwidth,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9288371179019885,0.15389675281277312
+within_mesh_matched_campaign,WD_DamBreak,mean row neighbour span,ms_per_face:AVX512 other meshes:AVX512-B,5,0.9983289954352879,0.15389675281277312
+within_mesh_matched_campaign,WD_DamBreak,P99 row neighbour span,ms_per_face:AVX512 other meshes:AVX512-B,5,0.998992130004825,0.35909242322980395
+matched_campaign,M8 wide,W4 chunks,ms_per_face:M8.4x128,4,-0.9822347676483727,-0.6000000000000001
+matched_campaign,M8 wide,W4 chunks,ms_per_cell:M8.4x128,4,-0.9823386817714442,-0.6000000000000001
+matched_campaign,M8 wide,W4 utilization,ms_per_face:M8.4x128,4,-0.9993496205493148,-1.0
+matched_campaign,M8 wide,W4 utilization,ms_per_cell:M8.4x128,4,-0.9993588668955407,-1.0
+matched_campaign,M8 wide,estimated W4 instructions/face,ms_per_face:M8.4x128,4,0.9993266161257686,1.0
+matched_campaign,M8 wide,estimated W4 instructions/face,ms_per_cell:M8.4x128,4,0.999329722389853,1.0
+matched_campaign,M8 wide,W4 active unique lines/chunk,ms_per_face:M8.4x128,4,0.8829226725814779,0.6000000000000001
+matched_campaign,M8 wide,W4 active unique lines/chunk,ms_per_cell:M8.4x128,4,0.8831778315416549,0.6000000000000001
+matched_campaign,M8 wide,W4 active 4KiB pages/chunk,ms_per_face:M8.4x128,4,0.9800877452668646,0.6000000000000001
+matched_campaign,M8 wide,W4 active 4KiB pages/chunk,ms_per_cell:M8.4x128,4,0.98019758299197,0.6000000000000001
+matched_campaign,M8 wide,W4 line reuse distance P90,ms_per_face:M8.4x128,4,0.9726754144903432,0.7378647873726218
+matched_campaign,M8 wide,W4 line reuse distance P90,ms_per_cell:M8.4x128,4,0.9728034439549235,0.7378647873726218
+matched_campaign,M8 wide,active psi page reuse distance P90,ms_per_face:M8.4x128,4,0.9825909802814328,0.8944271909999159
+matched_campaign,M8 wide,active psi page reuse distance P90,ms_per_cell:M8.4x128,4,0.9826938422478422,0.8944271909999159
+matched_campaign,M8 wide,scatter line reuse distance P90,ms_per_face:M8.4x128,4,0.9726754144903432,0.7378647873726218
+matched_campaign,M8 wide,scatter line reuse distance P90,ms_per_cell:M8.4x128,4,0.9728034439549235,0.7378647873726218
+matched_campaign,M8 wide,matrix bandwidth,ms_per_face:M8.4x128,4,0.9825909802814328,0.8944271909999159
+matched_campaign,M8 wide,matrix bandwidth,ms_per_cell:M8.4x128,4,0.9826938422478422,0.8944271909999159
+matched_campaign,M8 wide,mean row neighbour span,ms_per_face:M8.4x128,4,0.9825909802814328,0.8944271909999159
+matched_campaign,M8 wide,mean row neighbour span,ms_per_cell:M8.4x128,4,0.9826938422478423,0.8944271909999159
+matched_campaign,M8 wide,P99 row neighbour span,ms_per_face:M8.4x128,4,0.9825909802814328,0.8944271909999159
+matched_campaign,M8 wide,P99 row neighbour span,ms_per_cell:M8.4x128,4,0.9826938422478422,0.8944271909999159
+matched_campaign,M8 wide,W4 chunks,ms_per_face:M8.2x256,4,-0.9860633346133528,-0.6000000000000001
+matched_campaign,M8 wide,W4 chunks,ms_per_cell:M8.2x256,4,-0.9861149480609476,-0.6000000000000001
+matched_campaign,M8 wide,W4 utilization,ms_per_face:M8.2x256,4,-0.9993303017956263,-1.0
+matched_campaign,M8 wide,W4 utilization,ms_per_cell:M8.2x256,4,-0.9993294913922617,-1.0
+matched_campaign,M8 wide,estimated W4 instructions/face,ms_per_face:M8.2x256,4,0.9990504260277046,1.0
+matched_campaign,M8 wide,estimated W4 instructions/face,ms_per_cell:M8.2x256,4,0.999046252909859,1.0
+matched_campaign,M8 wide,W4 active unique lines/chunk,ms_per_face:M8.2x256,4,0.8930023818325902,0.6000000000000001
+matched_campaign,M8 wide,W4 active unique lines/chunk,ms_per_cell:M8.2x256,4,0.8931378775725998,0.6000000000000001
+matched_campaign,M8 wide,W4 active 4KiB pages/chunk,ms_per_face:M8.2x256,4,0.9841649517206151,0.6000000000000001
+matched_campaign,M8 wide,W4 active 4KiB pages/chunk,ms_per_cell:M8.2x256,4,0.9842198223014148,0.6000000000000001
+matched_campaign,M8 wide,W4 line reuse distance P90,ms_per_face:M8.2x256,4,0.9775062733951498,0.7378647873726218
+matched_campaign,M8 wide,W4 line reuse distance P90,ms_per_cell:M8.2x256,4,0.9775711923844814,0.7378647873726218
+matched_campaign,M8 wide,active psi page reuse distance P90,ms_per_face:M8.2x256,4,0.9863803316651574,0.8944271909999159
+matched_campaign,M8 wide,active psi page reuse distance P90,ms_per_cell:M8.2x256,4,0.9864313471302308,0.8944271909999159
+matched_campaign,M8 wide,scatter line reuse distance P90,ms_per_face:M8.2x256,4,0.9775062733951498,0.7378647873726218
+matched_campaign,M8 wide,scatter line reuse distance P90,ms_per_cell:M8.2x256,4,0.9775711923844814,0.7378647873726218
+matched_campaign,M8 wide,matrix bandwidth,ms_per_face:M8.2x256,4,0.9863803316651574,0.8944271909999159
+matched_campaign,M8 wide,matrix bandwidth,ms_per_cell:M8.2x256,4,0.9864313471302308,0.8944271909999159
+matched_campaign,M8 wide,mean row neighbour span,ms_per_face:M8.2x256,4,0.9863803316651574,0.8944271909999159
+matched_campaign,M8 wide,mean row neighbour span,ms_per_cell:M8.2x256,4,0.9864313471302308,0.8944271909999159
+matched_campaign,M8 wide,P99 row neighbour span,ms_per_face:M8.2x256,4,0.9863803316651574,0.8944271909999159
+matched_campaign,M8 wide,P99 row neighbour span,ms_per_cell:M8.2x256,4,0.9864313471302308,0.8944271909999159
+matched_campaign,M8 wide,W4 chunks,ms_per_face:M8.1x512,4,-0.9859430140365925,-0.6000000000000001
+matched_campaign,M8 wide,W4 chunks,ms_per_cell:M8.1x512,4,-0.986000722403087,-0.6000000000000001
+matched_campaign,M8 wide,W4 utilization,ms_per_face:M8.1x512,4,-0.9990232127242233,-1.0
+matched_campaign,M8 wide,W4 utilization,ms_per_cell:M8.1x512,4,-0.9990234855549871,-1.0
+matched_campaign,M8 wide,estimated W4 instructions/face,ms_per_face:M8.1x512,4,0.9987182162825136,1.0
+matched_campaign,M8 wide,estimated W4 instructions/face,ms_per_cell:M8.1x512,4,0.9987148337026807,1.0
+matched_campaign,M8 wide,W4 active unique lines/chunk,ms_per_face:M8.1x512,4,0.8933336709324193,0.6000000000000001
+matched_campaign,M8 wide,W4 active unique lines/chunk,ms_per_cell:M8.1x512,4,0.8934829051444587,0.6000000000000001
+matched_campaign,M8 wide,W4 active 4KiB pages/chunk,ms_per_face:M8.1x512,4,0.9840695164760767,0.6000000000000001
+matched_campaign,M8 wide,W4 active 4KiB pages/chunk,ms_per_cell:M8.1x512,4,0.9841307632006943,0.6000000000000001
+matched_campaign,M8 wide,W4 line reuse distance P90,ms_per_face:M8.1x512,4,0.977469820093549,0.7378647873726218
+matched_campaign,M8 wide,W4 line reuse distance P90,ms_per_cell:M8.1x512,4,0.9775420221308311,0.7378647873726218
+matched_campaign,M8 wide,active psi page reuse distance P90,ms_per_face:M8.1x512,4,0.9862641241391041,0.8944271909999159
+matched_campaign,M8 wide,active psi page reuse distance P90,ms_per_cell:M8.1x512,4,0.986321163504148,0.8944271909999159
+matched_campaign,M8 wide,scatter line reuse distance P90,ms_per_face:M8.1x512,4,0.977469820093549,0.7378647873726218
+matched_campaign,M8 wide,scatter line reuse distance P90,ms_per_cell:M8.1x512,4,0.9775420221308311,0.7378647873726218
+matched_campaign,M8 wide,matrix bandwidth,ms_per_face:M8.1x512,4,0.9862641241391041,0.8944271909999159
+matched_campaign,M8 wide,matrix bandwidth,ms_per_cell:M8.1x512,4,0.986321163504148,0.8944271909999159
+matched_campaign,M8 wide,mean row neighbour span,ms_per_face:M8.1x512,4,0.9862641241391041,0.8944271909999159
+matched_campaign,M8 wide,mean row neighbour span,ms_per_cell:M8.1x512,4,0.9863211635041481,0.8944271909999159
+matched_campaign,M8 wide,P99 row neighbour span,ms_per_face:M8.1x512,4,0.9862641241391041,0.8944271909999159
+matched_campaign,M8 wide,P99 row neighbour span,ms_per_cell:M8.1x512,4,0.986321163504148,0.8944271909999159
