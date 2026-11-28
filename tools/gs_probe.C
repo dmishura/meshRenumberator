@@ -8,6 +8,8 @@
 #include "gs_m7.H"
 #include "gs_m74d.H"
 #include "gs_m8.H"
+#include "gs_avx512.H"
+#include "gs_m8wide.H"
 #include <cstring>
 
 #include <algorithm>
@@ -205,7 +207,7 @@ try
               << solutionError << ',' << crossError << ',' << oneSweepDelta << '\n';
     const auto* experimental = std::getenv("MESH_GS_VARIANT");
     const auto* pmuSelection = std::getenv("MESH_PMU_KERNEL");
-    if (!experimental && pmuSelection && (std::string(pmuSelection) == "M7" || std::string(pmuSelection) == "M7.4d" || std::string(pmuSelection) == "M8a" || std::string(pmuSelection) == "M8b" || std::string(pmuSelection) == "M8c" || std::string(pmuSelection) == "SWnd4" || std::string(pmuSelection) == "SWndReload4" || std::string(pmuSelection) == "MinimalReload4" || std::string(pmuSelection) == "Padded4" || std::string(pmuSelection) == "OptimizedMinimalReload4" || std::string(pmuSelection) == "OptimizedMinimalReload4OverlappingMasks" || std::string(pmuSelection) == "OptimizedMinimalReload4SimplifiedMaskIndex" || std::string(pmuSelection) == "OptimizedMinimalReload4RemainingCount" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGpr" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprOverlappingMasks" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprMemoryZero" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminal" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminalMemoryZero"))
+    if (!experimental && pmuSelection && (std::string(pmuSelection) == "M7" || std::string(pmuSelection) == "M7.4d" || std::string(pmuSelection) == "M8a" || std::string(pmuSelection) == "M8b" || std::string(pmuSelection) == "M8c" || std::string(pmuSelection) == "M8.4x128" || std::string(pmuSelection) == "M8.2x256" || std::string(pmuSelection) == "M8.1x512" || std::string(pmuSelection) == "SWnd4" || std::string(pmuSelection) == "SWndReload4" || std::string(pmuSelection) == "MinimalReload4" || std::string(pmuSelection) == "Padded4" || std::string(pmuSelection) == "OptimizedMinimalReload4" || std::string(pmuSelection) == "OptimizedMinimalReload4OverlappingMasks" || std::string(pmuSelection) == "OptimizedMinimalReload4SimplifiedMaskIndex" || std::string(pmuSelection) == "OptimizedMinimalReload4RemainingCount" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGpr" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprOverlappingMasks" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprMemoryZero" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminal" || std::string(pmuSelection) == "OptimizedMinimalReload4SingleIndexGprIsolatedTerminalMemoryZero"))
         experimental = pmuSelection;
     if (!experimental && pmuSelection &&
         (std::string(pmuSelection) == "OptimizedMinimalReload4MaskedScatterBasic" ||
@@ -213,9 +215,16 @@ try
         experimental = pmuSelection;
     if (experimental && (std::string(experimental) == "M8a" ||
                          std::string(experimental) == "M8b" ||
-                         std::string(experimental) == "M8c")) {
+                         std::string(experimental) == "M8c" ||
+                         std::string(experimental) == "M8.4x128" ||
+                         std::string(experimental) == "M8.2x256" ||
+                         std::string(experimental) == "M8.1x512" ||
+                         std::string(experimental) == "M6.4d-AVX512-A" ||
+                         std::string(experimental) == "M6.4d-AVX512-B")) {
         const std::string name(experimental);
         gsExperiment::MinimalOptData data(ldu);
+        const bool wide8 = name == "M8.4x128" || name == "M8.2x256" ||
+                           name == "M8.1x512";
         const auto validateAndMeasure = [&](auto run) {
             scalarField result(output.nCells,0.0);
             run(result,1);
@@ -225,7 +234,8 @@ try
             check(std::memcmp(result.data(),converged.data(),converged.size()*sizeof(double))==0,
                   "M8 192-sweep result differs bitwise");
             std::cout << name << "_validation,bitwise_one_and_192_passed,"
-                      << data.terminalRow << '\n';
+                      << (wide8 ? gsExperiment::m8TerminalRow8(ldu)
+                                : data.terminalRow) << '\n';
             if (std::getenv("MESH_GS_VALIDATE_ONLY")) return 0;
             const auto* ctl=std::getenv("MESH_PMU_CONTROL");
             const auto* ackPath=std::getenv("MESH_PMU_ACK");
@@ -235,6 +245,37 @@ try
             } else measure(name,1,source,run,sweeps,repetitions,loadMs);
             return 0;
         };
+        if (name == "M8.4x128" || name == "M8.2x256" || name == "M8.1x512") {
+            check(__builtin_cpu_supports("avx512f") &&
+                  __builtin_cpu_supports("avx512vl") &&
+                  __builtin_cpu_supports("avx512dq"),
+                  "AVX-512F/VL/DQ required");
+            if (name == "M8.4x128") {
+                const auto run = [&](scalarField& psi,int count) {
+                    gsExperiment::minimal8Avx512<0>(psi,ldu,source,count,data);
+                };
+                return validateAndMeasure(run);
+            }
+            if (name == "M8.2x256") {
+                const auto run = [&](scalarField& psi,int count) {
+                    gsExperiment::minimal8Avx512<1>(psi,ldu,source,count,data);
+                };
+                return validateAndMeasure(run);
+            }
+            const auto run = [&](scalarField& psi,int count) {
+                gsExperiment::minimal8Avx512<2>(psi,ldu,source,count,data);
+            };
+            return validateAndMeasure(run);
+        }
+        if (name == "M6.4d-AVX512-A" || name == "M6.4d-AVX512-B") {
+            check(__builtin_cpu_supports("avx512vl") && __builtin_cpu_supports("avx512dq"),
+                  "AVX-512VL/DQ required");
+            auto kernel = name.back()=='A' ? gsExperiment::minimal4Avx512<false>
+                                           : gsExperiment::minimal4Avx512<true>;
+            return validateAndMeasure([&](scalarField& psi,int count) {
+                kernel(psi,ldu,source,count,data);
+            });
+        }
         if (name == "M8a") {
             const auto run = [&](scalarField& psi,int count) {
                 gsExperiment::cacheHybridM8<0>(psi,ldu,source,count,data);
